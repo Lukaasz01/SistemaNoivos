@@ -1,0 +1,12 @@
+.max-w-custom { max-width: 1400px; margin: 0 auto; }
+.tracking-wide { letter-spacing: 0.05em; }
+.min-w-md-300 { min-width: 300px; }
+.transition-colors { transition: all 0.2s ease; }
+.whitespace-nowrap { white-space: nowrap; }
+.custom-pills .nav-link { color: #6c757d; font-weight: 500; font-size: 0.9rem; }
+.custom-pills .nav-link:hover { color: var(--wedding-primary); }
+.custom-pills .nav-link.active { background-color: var(--wedding-primary); color: white; }
+.table-hover tbody tr:hover { background-color: rgba(244, 239, 234, 0.3); }
+.dropdown-toggle::after { margin-left: 0.5em; vertical-align: middle; }
+.dropdown-menu { font-size: 0.85rem; }
+.hide-scroll::-webkit-scrollbar { display: none; }

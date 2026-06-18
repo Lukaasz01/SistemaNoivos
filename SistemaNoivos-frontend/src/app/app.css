@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:host {
+  display: block;
+  --wedding-bg: #FDFCFB;
+  --wedding-primary: #D4B8B1;
+  --wedding-primary-hover: #C4A49D;
+  --wedding-accent: #A3B19B;
+  --wedding-dark: #4A4A4A;
+  --wedding-light: #F4EFEA;
+}
+
+.font-sans { font-family: 'Inter', sans-serif; }
+.font-serif { font-family: 'Playfair Display', serif; }
+.text-wedding-dark { color: var(--wedding-dark); }
+.text-wedding-primary { color: var(--wedding-primary) !important; }
+
+.bg-wedding-bg { background-color: var(--wedding-bg); }
+.bg-wedding-primary { background-color: var(--wedding-primary) !important; }
+.bg-white { background-color: #ffffff !important; }
+
+.sidebar { width: 260px; }
+.custom-nav-link { color: #6c757d; font-weight: 500; transition: all 0.2s ease; }
+.custom-nav-link:hover { background-color: #f8f9fa; color: var(--wedding-dark); }
+.custom-nav-link.active { background-color: var(--wedding-light); color: var(--wedding-dark); }
+.custom-nav-link.active i { color: var(--wedding-primary); }
+
+.btn-wedding-primary { background-color: var(--wedding-primary); border: none; }
+.btn-wedding-primary:hover { background-color: var(--wedding-primary-hover); }
+.action-btn { transition: transform 0.1s; }
+.action-btn:active { transform: scale(0.95); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D4B8B1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #C4A49D; }
+.pb-safe { padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); }

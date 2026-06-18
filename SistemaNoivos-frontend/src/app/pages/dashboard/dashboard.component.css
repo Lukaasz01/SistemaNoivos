@@ -1,0 +1,32 @@
+.max-w-custom { max-width: 1400px; margin: 0 auto; }
+.tracking-wide { letter-spacing: 0.05em; }
+.min-w-80 { min-width: 85px; }
+.cursor-pointer { cursor: pointer; }
+.transition-colors { transition: all 0.2s ease; }
+.text-transition { transition: color 0.2s ease, text-decoration 0.2s ease; }
+
+.backdrop-blur { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.blur-effect { filter: blur(30px); -webkit-filter: blur(30px); }
+
+.btn-wedding-light { background-color: var(--wedding-light); border: none; transition: all 0.2s ease; }
+.btn-wedding-light:hover { background-color: var(--wedding-primary); color: white !important; }
+
+.btn-outline-dashed { border: 1px dashed #dee2e6; background: transparent; }
+.btn-outline-dashed:hover { border-color: var(--wedding-primary); color: var(--wedding-primary) !important; background-color: #f8f9fa; }
+
+.custom-checkbox { width: 20px; height: 20px; border-color: #dee2e6; transition: all 0.2s ease; }
+.custom-checkbox.checked { background-color: var(--wedding-primary); }
+.task-item:hover .text-transition:not(.text-decoration-line-through) { color: var(--wedding-dark) !important; }
+
+.donut-chart {
+  width: 130px; height: 130px;
+  background: conic-gradient(var(--wedding-accent) 0% 65%, var(--wedding-light) 65% 90%, #fca5a5 90% 100%);
+}
+.inner-circle { width: 100px; height: 100px; }
+.shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); }
+
+.vendor-card { transition: box-shadow 0.2s ease; }
+.vendor-card:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.05) !important; }
+
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }

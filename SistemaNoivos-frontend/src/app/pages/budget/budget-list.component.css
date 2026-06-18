@@ -1,0 +1,17 @@
+.max-w-custom { max-width: 1400px; margin: 0 auto; }
+.tracking-wide { letter-spacing: 0.05em; }
+.cursor-pointer { cursor: pointer; }
+.transition-colors { transition: all 0.2s ease; }
+
+.table-hover tbody tr:hover { background-color: rgba(244, 239, 234, 0.3); }
+.font-monospace { font-family: 'SFMono-Regular', Menlo, Monaco, Consolas, monospace !important; letter-spacing: -0.5px; }
+
+/* Injeção de paletas para o gráfico de barras dinâmico */
+:host {
+  --cat-1: #D4B8B1;
+  --cat-2: #A3B19B;
+  --cat-3: #B38B82;
+  --cat-4: #9BB1B1;
+  --cat-5: #E8D5C4;
+  --cat-6: #CBD5E1;
+}
