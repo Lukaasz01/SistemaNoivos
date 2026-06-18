@@ -1,0 +1,197 @@
+<div class="container-fluid p-4 p-md-5 max-w-custom">
+
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-6 col-lg-3">
+      <div class="card bg-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="rounded-circle bg-wedding-light text-wedding-primary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <i class="fa-solid fa-store small"></i>
+          </div>
+          <h6 class="text-muted m-0 fw-medium small text-uppercase tracking-wide">Fornecedores</h6>
+        </div>
+        <h3 class="font-serif fs-3 m-0 text-dark">{{ vendorService.stats().totalCount }} Cadastrados</h3>
+        <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+          <span>Ativos na organização</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="card bg-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4 position-relative overflow-hidden">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <i class="fa-solid fa-file-signature small"></i>
+          </div>
+          <h6 class="text-muted m-0 fw-medium small text-uppercase tracking-wide">Contratos Fechados</h6>
+        </div>
+        <h3 class="font-serif fs-3 m-0 text-success">{{ vendorService.stats().contractedCount }} / {{ vendorService.stats().totalCount }}</h3>
+        <div class="mt-2 text-success fw-medium" style="font-size: 0.75rem;">
+          <span>{{ vendorService.stats().contractedPercentage }}% da equipe montada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="card bg-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <i class="fa-solid fa-hourglass-half small"></i>
+          </div>
+          <h6 class="text-muted m-0 fw-medium small text-uppercase tracking-wide">Em Aberto / Orçamento</h6>
+        </div>
+        <h3 class="font-serif fs-3 m-0 text-dark">{{ vendorService.stats().pendingCount }} Pendentes</h3>
+        <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+          <span>Aguardando aprovação</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="card bg-wedding-primary text-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4 position-relative overflow-hidden">
+        <div class="position-absolute top-0 end-0 bg-white rounded-circle opacity-10" style="width: 100px; height: 100px; margin-right: -30px; margin-top: -30px;"></div>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="rounded-circle bg-white bg-opacity-25 text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <i class="fa-solid fa-coins small"></i>
+          </div>
+          <h6 class="text-white text-opacity-75 m-0 fw-medium small text-uppercase tracking-wide">Total Comprometido</h6>
+        </div>
+        <h3 class="font-serif fs-3 m-0 text-white">R$ {{ vendorService.stats().totalSpent | number:'1.2-2' }}</h3>
+        <div class="mt-2 text-white text-opacity-75" style="font-size: 0.75rem;">
+          <span>Investimento em contratos</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card bg-white border-0 shadow-sm rounded-4 p-4 mb-4">
+    <div class="row g-3 align-items-center justify-content-between">
+
+      <div class="col-12 col-md-4">
+        <div class="position-relative">
+          <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
+          <input type="text" class="form-control rounded-pill ps-5 bg-light border-0"
+                 placeholder="Buscar por empresa ou contato..."
+                 [value]="vendorService.searchQuery()"
+                 (input)="onSearchInput($event)">
+        </div>
+      </div>
+
+      <div class="col-12 col-md-auto">
+        <ul class="nav custom-pills bg-light p-1 rounded-pill d-inline-flex w-100 w-md-auto text-center">
+          <li class="nav-item flex-grow-1 flex-md-grow-0">
+            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
+                    [class.active]="vendorService.currentFilter() === 'all'"
+                    (click)="vendorService.setFilter('all')">Todos</button>
+          </li>
+          <li class="nav-item flex-grow-1 flex-md-grow-0">
+            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
+                    [class.active]="vendorService.currentFilter() === 'Contratado'"
+                    (click)="vendorService.setFilter('Contratado')">Contratados</button>
+          </li>
+          <li class="nav-item flex-grow-1 flex-md-grow-0">
+            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
+                    [class.active]="vendorService.currentFilter() === 'Em Negociação'"
+                    (click)="vendorService.setFilter('Em Negociação')">Em Negociação</button>
+          </li>
+          <li class="nav-item flex-grow-1 flex-md-grow-0">
+            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
+                    [class.active]="vendorService.currentFilter() === 'Favorites'"
+                    (click)="vendorService.setFilter('Favorites')"><i class="fa-solid fa-heart me-1"></i> Favoritos</button>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row g-4">
+    @for (vendor of vendorService.filteredVendors(); track vendor.id) {
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100 vendor-detail-card overflow-hidden transition-all bg-white position-relative">
+
+        <button class="btn border-0 position-absolute end-0 top-0 m-3 favorite-btn z-1"
+                (click)="toggleFavorite($event, vendor.id)">
+          <i class="fa-heart fs-5 transition-colors"
+             [class.fa-solid]="vendor.isFavorite"
+             [class.fa-regular]="!vendor.isFavorite"
+             [class.text-danger]="vendor.isFavorite"
+             [class.text-muted]="!vendor.isFavorite"></i>
+        </button>
+
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="badge rounded-pill bg-wedding-light text-wedding-primary fw-medium px-2.5 py-1.5" style="font-size: 0.7rem;">
+                <i class="fa-solid me-1" [class]="vendor.icon"></i>
+                {{ vendor.category }}
+              </span>
+            <div class="ms-auto d-flex gap-0.5 pe-4">
+              @for (star of [1,2,3,4,5]; track star) {
+              <i class="fa-solid fa-star small"
+                 [class.text-warning]="star <= vendor.rating"
+                 [class.text-light]="star > vendor.rating"
+                 style="font-size: 0.7rem;"></i>
+              }
+            </div>
+          </div>
+
+          <h4 class="font-serif fs-5 text-dark mb-1">{{ vendor.name }}</h4>
+          <p class="text-muted small mb-3"><i class="fa-regular fa-user me-1"></i> Contato: {{ vendor.contactName }}</p>
+
+          <div class="bg-wedding-light bg-opacity-50 p-3 rounded-3 mb-4 mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted">Valor acordado</span>
+              <span class="fw-bold text-dark font-monospace">R$ {{ vendor.cost | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-auto gap-2">
+            <div class="dropdown">
+              <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1.5 border-0 d-inline-flex align-items-center gap-1.5"
+                      [ngClass]="getStatusClasses(vendor.status)"
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.7rem;">
+                <i class="fa-solid fa-circle" style="font-size: 0.4rem;"></i>
+                {{ vendor.status }}
+              </button>
+              <ul class="dropdown-menu border-0 shadow-sm rounded-3 text-sm">
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Contratado')"><i class="fa-solid fa-circle text-success" style="font-size: 0.5rem;"></i> Contratado</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Em Negociação')"><i class="fa-solid fa-circle text-warning" style="font-size: 0.5rem;"></i> Em Negociação</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Orçando')"><i class="fa-solid fa-circle text-secondary" style="font-size: 0.5rem;"></i> Orçando</a></li>
+              </ul>
+            </div>
+
+            <div class="d-flex gap-1">
+              <a [href]="'https://wa.me/' + vendor.phone" target="_blank"
+                 class="btn btn-sm btn-outline-success border-0 rounded-circle d-flex align-items-center justify-content-center"
+                 style="width: 32px; height: 32px;" title="Conversar no WhatsApp">
+                <i class="fa-brands fa-whatsapp fs-5"></i>
+              </a>
+              <button class="btn btn-sm btn-outline-secondary border-0 rounded-circle d-flex align-items-center justify-content-center"
+                      style="width: 32px; height: 32px;" title="Configurações">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    }
+
+    @for (vendor of vendorService.filteredVendors(); track vendor.id) {
+    }
+    @if (vendorService.filteredVendors().length === 0) {
+    <div class="col-12">
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <div class="rounded-circle bg-wedding-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 65px; height: 65px;">
+          <i class="fa-solid fa-store-slash fs-4 text-wedding-primary opacity-50"></i>
+        </div>
+        <h5 class="text-dark">Nenhum fornecedor encontrado</h5>
+        <p class="text-muted small">Altere a busca ou adicione um novo parceiro para começar.</p>
+      </div>
+    </div>
+    }
+  </div>
+
+</div>

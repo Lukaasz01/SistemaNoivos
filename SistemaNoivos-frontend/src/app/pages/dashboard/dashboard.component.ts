@@ -14,34 +14,34 @@ import { Vendor } from '../../models/wedding.model';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-  // Injetando os serviços reais que você já criou!
   taskService = inject(TaskService);
   guestService = inject(GuestService);
 
-  // Computa apenas as próximas 3 tarefas pendentes para o resumo
   upcomingTasks = computed(() => {
     return this.taskService.tasks().filter(t => !t.completed).slice(0, 3);
   });
 
-  // Estado Temporário do Orçamento (Até criarmos o BudgetService)
   budget = signal({
     spent: 45200,
     estimated: 75000,
     percentage: 60
   });
 
-  // Estado Temporário dos Fornecedores (Até criarmos o VendorService)
+  // Lista de fornecedores do resumo atualizada para o novo modelo estrito
   vendors = signal<Vendor[]>([
     {
-      id: 1, name: 'Studio Luz', category: 'Fotografia e Vídeo', status: 'Contratado',
+      id: 1, name: 'Studio Luz', category: 'Fotografia', status: 'Contratado',
+      contactName: 'Marcos Santos', phone: '(11) 99999-3333', cost: 8200, rating: 4, isFavorite: true,
       icon: 'fa-solid fa-camera', iconColor: 'text-success', bgClass: 'bg-success bg-opacity-10', badgeClass: 'bg-success bg-opacity-25 text-success'
     },
     {
-      id: 2, name: 'Banda Viva', category: 'Música / DJ', status: 'Contratado',
+      id: 2, name: 'Banda Viva', category: 'Música', status: 'Contratado',
+      contactName: 'Rafa & Banda', phone: '(11) 99999-4444', cost: 5000, rating: 4, isFavorite: false,
       icon: 'fa-solid fa-music', iconColor: 'text-primary', bgClass: 'bg-primary bg-opacity-10', badgeClass: 'bg-success bg-opacity-25 text-success'
     },
     {
-      id: 3, name: 'A definir', category: 'Bolo e Doces', status: 'Orçando',
+      id: 3, name: 'A definir', category: 'Buffet', status: 'Orçando',
+      contactName: '-', phone: '-', cost: 0, rating: 0, isFavorite: false,
       icon: 'fa-solid fa-cake-candles', iconColor: 'text-warning', bgClass: 'bg-warning bg-opacity-10', badgeClass: 'bg-warning bg-opacity-25 text-warning'
     }
   ]);

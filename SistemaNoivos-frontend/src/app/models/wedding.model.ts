@@ -12,20 +12,6 @@ export interface Task {
 }
 
 // ==========================================
-// FORNECEDORES
-// ==========================================
-export interface Vendor {
-  id: number;
-  name: string;
-  category: string;
-  status: 'Contratado' | 'Orçando';
-  icon: string;
-  iconColor: string;
-  bgClass: string;
-  badgeClass: string;
-}
-
-// ==========================================
 // CONVIDADOS
 // ==========================================
 export type RsvpStatus = 'confirmed' | 'pending' | 'declined';
@@ -35,7 +21,7 @@ export interface Guest {
   id: number;
   name: string;
   group: GuestGroup;
-  companions: number; // Número de acompanhantes além do convidado principal
+  companions: number;
   status: RsvpStatus;
   phone: string;
   dietaryRestrictions?: string;
@@ -54,4 +40,27 @@ export interface Expense {
   estimatedCost: number;
   actualCost: number;
   paidAmount: number;
+}
+
+// ==========================================
+// FORNECEDORES
+// ==========================================
+export type VendorStatus = 'Contratado' | 'Em Negociação' | 'Orçando';
+export type VendorCategory = 'Espaço' | 'Buffet' | 'Fotografia' | 'Decoração' | 'Música' | 'Trajes' | 'Assessoria';
+
+export interface Vendor {
+  id: number;
+  name: string;
+  category: VendorCategory;
+  contactName: string;
+  phone: string;
+  status: VendorStatus;
+  cost: number;
+  rating: number;
+  isFavorite: boolean;
+  icon: string;
+  // Propriedades opcionais e alinhadas para o Dashboard
+  iconColor?: string;
+  bgClass?: string;
+  badgeClass?: string;
 }

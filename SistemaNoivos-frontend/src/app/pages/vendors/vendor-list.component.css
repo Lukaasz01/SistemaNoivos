@@ -1,0 +1,34 @@
+.max-w-custom { max-width: 1400px; margin: 0 auto; }
+.tracking-wide { letter-spacing: 0.05em; }
+.cursor-pointer { cursor: pointer; }
+.transition-colors { transition: all 0.2s ease; }
+.transition-all { transition: all 0.25s ease; }
+
+.custom-pills .nav-link { color: #6c757d; font-weight: 500; font-size: 0.9rem; }
+.custom-pills .nav-link:hover { color: var(--wedding-primary); }
+.custom-pills .nav-link.active {
+  background-color: var(--wedding-primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(212, 184, 177, 0.4);
+}
+
+.vendor-detail-card {
+  border: 1px solid transparent;
+}
+.vendor-detail-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06) !important;
+  border-color: var(--wedding-light);
+}
+.font-monospace { font-family: 'SFMono-Regular', Menlo, Monaco, Consolas, monospace !important; }
+
+.favorite-btn {
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.favorite-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.dropdown-toggle::after { margin-left: 0.5em; vertical-align: middle; }
