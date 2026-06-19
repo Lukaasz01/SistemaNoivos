@@ -1,1 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+/* Importação das Fontes para todo o projeto */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+/* Variáveis de cores acessíveis por QUALQUER página */
+:root {
+  --wedding-bg: #FDFCFB;
+  --wedding-primary: #D4B8B1;
+  --wedding-primary-hover: #C4A49D;
+  --wedding-accent: #A3B19B;
+  --wedding-dark: #4A4A4A;
+  --wedding-light: #F4EFEA;
+}
+
+/* Classes utilitárias globais */
+.font-sans { font-family: 'Inter', sans-serif; }
+.font-serif { font-family: 'Playfair Display', serif; }
+.text-wedding-dark { color: var(--wedding-dark); }
+.text-wedding-primary { color: var(--wedding-primary) !important; }
+
+.bg-wedding-bg { background-color: var(--wedding-bg); }
+.bg-wedding-primary { background-color: var(--wedding-primary) !important; }
+.bg-wedding-light { background-color: var(--wedding-light) !important; }
+.bg-white { background-color: #ffffff !important; }
+
+.btn-wedding-primary { background-color: var(--wedding-primary) !important; border: none !important; color: white !important; }
+.btn-wedding-primary:hover { background-color: var(--wedding-primary-hover) !important; }
+
+/* Barras de rolagem elegantes para o sistema inteiro */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D4B8B1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #C4A49D; }

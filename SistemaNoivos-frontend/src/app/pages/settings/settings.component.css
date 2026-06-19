@@ -1,0 +1,60 @@
+.max-w-settings { max-width: 900px; width: 100%; }
+.tracking-wider { letter-spacing: 0.08em; }
+.cursor-pointer { cursor: pointer; }
+.whitespace-nowrap { white-space: nowrap; }
+
+/* Estilos das Tabs Horizontais (Pills) */
+.custom-pills .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.custom-pills .nav-link:hover { color: var(--wedding-primary); }
+.custom-pills .nav-link.active {
+  background-color: var(--wedding-primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(212, 184, 177, 0.4);
+}
+
+/* Form Inputs focus state */
+.form-control:focus, .form-select:focus {
+  border-color: var(--wedding-primary);
+  box-shadow: 0 0 0 0.25rem rgba(212, 184, 177, 0.15);
+  background-color: #fff !important;
+}
+
+/* Switch Custom */
+.custom-switch .form-check-input:checked {
+  background-color: var(--wedding-primary);
+  border-color: var(--wedding-primary);
+}
+.custom-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(212, 184, 177, 0.25);
+  border-color: var(--wedding-primary);
+}
+
+.icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hover-shadow:hover {
+  background-color: #fff !important;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+/* Animação suave ao trocar de aba */
+.animation-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hide-scroll::-webkit-scrollbar { display: none; }

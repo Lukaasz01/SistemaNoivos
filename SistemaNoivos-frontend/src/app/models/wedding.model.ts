@@ -64,3 +64,7 @@ export interface Vendor {
   bgClass?: string;
   badgeClass?: string;
 }
+// ==========================================
+// CONFIGURAÇÕES
+// ==========================================
+export type SettingsTab = 'geral' | 'notificacoes' | 'colaboradores' | 'seguranca';
