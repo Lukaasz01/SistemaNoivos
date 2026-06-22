@@ -1,5 +1,9 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Task } from '../../models/wedding.model'; // Importando a tipagem centralizada!
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Task } from '../../models/wedding.model';
+import { environment } from '../../../environments/environment';
 
 export type FilterType = 'all' | 'pending' | 'completed';
 
@@ -7,21 +11,14 @@ export type FilterType = 'all' | 'pending' | 'completed';
   providedIn: 'root'
 })
 export class TaskService {
-  // Estado Base
-  tasks = signal<Task[]>([
-    { id: 1, title: 'Degustação do Buffet Fasano', date: 'Hoje, 19:00', category: 'Buffet', categoryTheme: 'warning', completed: false, isOverdue: true },
-    { id: 2, title: 'Aprovar arte do convite com o designer', date: 'Amanhã', category: 'Convites', categoryTheme: 'accent', completed: false, isOverdue: true },
-    { id: 3, title: 'Pagar 2ª parcela do Fotógrafo', date: '20 Jun 2026', category: 'Financeiro', categoryTheme: 'secondary', completed: false },
-    { id: 4, title: 'Primeira prova do vestido de noiva', date: '15 Jul 2026', category: 'Trajes', categoryTheme: 'primary', completed: false },
-    { id: 5, title: 'Definir lista de padrinhos', date: '01 Ago 2026', category: 'Convidados', categoryTheme: 'info', completed: false },
-    { id: 6, title: 'Visitar espaço Fazenda Santa Bárbara', date: '10 Fev 2026', category: 'Local', categoryTheme: 'accent', completed: true },
-    { id: 7, title: 'Criar pasta de inspirações (Pinterest)', date: '05 Fev 2026', category: 'Planejamento', categoryTheme: 'primary', completed: true },
-  ]);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/tasks`;
 
-  // Estado do Filtro
+  // Estado Base inicializado vazio esperando o Java
+  tasks = signal<Task[]>([]);
   currentFilter = signal<FilterType>('all');
 
-  // Computed Properties
+  // Computed Properties (Permanecem IGUAIS! A reatividade do Angular Signals faz a mágica)
   filteredTasks = computed(() => {
     const filter = this.currentFilter();
     const allTasks = this.tasks();
@@ -41,16 +38,36 @@ export class TaskService {
     return Math.round((this.completedCount() / total) * 100);
   });
 
-  // Ações
-  setFilter(filter: FilterType) {
-    this.currentFilter.set(filter);
+  // --- CHAMADAS DA API JAVA ---
+
+  // Buscar tarefas do PostgreSQL
+  getAllTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl).pipe(
+      tap(dados => this.tasks.set(dados))
+    );
   }
 
-  toggleTask(id: number) {
-    this.tasks.update(tasks =>
-      tasks.map(task =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+  // Mudar status (concluir/desmarcar) salvando no banco
+  toggleTask(id: number): Observable<Task> {
+    const taskToUpdate = this.tasks().find(t => t.id === id);
+    if (!taskToUpdate) throw new Error('Tarefa não encontrada localmente');
+
+    const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, updatedTask).pipe(
+      tap(taskSalva => {
+        this.tasks.update(lista => lista.map(t => t.id === id ? taskSalva : t));
+      })
     );
+  }
+
+  deleteTask(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.tasks.update(lista => lista.filter(t => t.id !== id)))
+    );
+  }
+
+  setFilter(filter: FilterType) {
+    this.currentFilter.set(filter);
   }
 }
