@@ -47,14 +47,16 @@
     </div>
   </div>
 
-  <div class="card bg-white border-0 shadow-sm rounded-4 overflow-hidden">
+  <div class="card bg-white border-0 shadow-sm rounded-4">
     <div class="p-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 bg-light bg-opacity-50">
+
       <div class="position-relative min-w-md-300">
         <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
         <input type="text" class="form-control rounded-pill ps-5 bg-white shadow-sm border-0"
                placeholder="Buscar por nome ou telefone..."
                [value]="guestService.searchQuery()" (input)="onSearchInput($event)">
       </div>
+
       <ul class="nav custom-pills bg-white shadow-sm p-1 rounded-pill d-inline-flex flex-nowrap overflow-x-auto hide-scroll mx-md-0 mx-auto w-100 w-md-auto">
         <li class="nav-item">
           <button class="nav-link rounded-pill border-0 px-3 px-md-4 whitespace-nowrap" [class.active]="guestService.currentFilter() === 'all'" (click)="guestService.setFilter('all')">Todos</button>
@@ -66,6 +68,13 @@
           <button class="nav-link rounded-pill border-0 px-3 px-md-4 whitespace-nowrap" [class.active]="guestService.currentFilter() === 'pending'" (click)="guestService.setFilter('pending')">Pendentes</button>
         </li>
       </ul>
+
+      <button class="btn rounded-pill px-4 ms-md-auto whitespace-nowrap shadow-sm text-white"
+              data-bs-toggle="modal" data-bs-target="#addGuestModal"
+              style="background-color: #B38B82; border-color: #B38B82;">
+        <i class="fa-solid fa-plus me-2"></i> Novo Convidado
+      </button>
+
     </div>
 
     <div class="table-responsive p-0 m-0 custom-table-wrapper">
@@ -81,8 +90,9 @@
         </thead>
         <tbody class="border-top-0">
         @for (guest of guestService.filteredGuests(); track guest.id) {
-        <tr class="transition-colors group-row" [class.opacity-50]="guest.status === 'declined'">
-          <td class="ps-4 py-3 border-light">
+        <tr class="transition-colors group-row">
+
+          <td class="ps-4 py-3 border-light" [class.opacity-50]="guest.status === 'declined'">
             <div class="d-flex align-items-center gap-3">
               <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-medium"
                    [style.background-color]="getAvatarColor(guest.name)" style="width: 38px; height: 38px;">
@@ -94,29 +104,101 @@
               </div>
             </div>
           </td>
-          <td class="py-3 border-light">
+
+          <td class="py-3 border-light" [class.opacity-50]="guest.status === 'declined'">
             <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill px-2 py-1 fw-medium" style="font-size: 0.7rem;">{{ guest.group }}</span>
           </td>
-          <td class="py-3 border-light text-center fw-bold">{{ 1 + guest.companions }}</td>
+
+          <td class="py-3 border-light text-center fw-bold" [class.opacity-50]="guest.status === 'declined'">
+            {{ 1 + guest.companions }}
+          </td>
+
           <td class="py-3 border-light text-center">
             <div class="dropdown">
               <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" [ngClass]="getStatusClasses(guest.status)" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem;">
                 {{ getStatusLabel(guest.status) }}
               </button>
               <ul class="dropdown-menu border-0 shadow-sm rounded-3 text-sm">
-                <li><a class="dropdown-item" href="#" (click)="changeStatus($event, guest.id, 'confirmed')">Confirmar</a></li>
-                <li><a class="dropdown-item" href="#" (click)="changeStatus($event, guest.id, 'pending')">Pendente</a></li>
-                <li><a class="dropdown-item text-danger" href="#" (click)="changeStatus($event, guest.id, 'declined')">Recusar</a></li>
+                <li><a class="dropdown-item" href="#" (click)="changeStatus($event, guest.id!, 'confirmed')">Confirmar</a></li>
+                <li><a class="dropdown-item" href="#" (click)="changeStatus($event, guest.id!, 'pending')">Pendente</a></li>
+                <li><a class="dropdown-item text-danger" href="#" (click)="changeStatus($event, guest.id!, 'declined')">Recusar</a></li>
               </ul>
             </div>
           </td>
+
           <td class="pe-4 py-3 border-light text-end">
-            <button class="btn btn-sm btn-link text-muted hover-danger"><i class="fa-regular fa-trash-can"></i></button>
+            <button class="btn btn-sm btn-link text-muted hover-danger" (click)="deleteGuest(guest.id!)"><i class="fa-regular fa-trash-can"></i></button>
           </td>
         </tr>
         }
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addGuestModal" tabindex="-1" aria-labelledby="addGuestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header border-bottom-0 pb-0 mt-2 ms-2">
+        <h5 class="modal-title fw-bold" id="addGuestModalLabel" style="color: #4A4A4A;">Adicionar Convidado</h5>
+        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form [formGroup]="guestForm" (ngSubmit)="onSubmit()">
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Nome Completo *</label>
+            <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="name" placeholder="Ex: João da Silva">
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Grupo *</label>
+              <select class="form-select rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="group">
+                <option value="Família Noiva">Família Noiva</option>
+                <option value="Família Noivo">Família Noivo</option>
+                <option value="Amigos">Amigos</option>
+                <option value="Trabalho">Trabalho</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Acompanhantes extras *</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="companions" min="0">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Telefone *</label>
+              <input type="text"
+                     class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="phone" placeholder="(11) 99999-9999" appPhoneMask maxlength="15">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Status *</label>
+              <select class="form-select rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="status">
+                <option value="pending">Pendente</option>
+                <option value="confirmed">Confirmado</option>
+                <option value="declined">Recusado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-medium">Restrições Alimentares</label>
+            <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="dietaryRestrictions" placeholder="Ex: Vegano, sem glúten (opcional)">
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-light rounded-pill px-4 fw-medium" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn rounded-pill px-4 shadow-sm text-white fw-medium" [disabled]="guestForm.invalid" style="background-color: #B38B82; border-color: #B38B82;">
+              Salvar Convidado
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   </div>
 </div>

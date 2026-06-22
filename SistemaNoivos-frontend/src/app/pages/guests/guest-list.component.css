@@ -10,3 +10,14 @@
 .dropdown-toggle::after { margin-left: 0.5em; vertical-align: middle; }
 .dropdown-menu { font-size: 0.85rem; }
 .hide-scroll::-webkit-scrollbar { display: none; }
+/* Garante que o container da tabela tenha altura mínima para o dropdown abrir */
+.custom-table-wrapper {
+  min-height: 250px;
+  padding-bottom: 60px; /* Dá um respiro extra no final da tabela */
+}
+
+/* Força a tabela a permitir que o menu vaze visualmente por cima das coisas */
+.table-responsive {
+  overflow-y: visible !important;
+  overflow-x: auto;
+}

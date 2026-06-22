@@ -18,7 +18,7 @@ export type RsvpStatus = 'confirmed' | 'pending' | 'declined';
 export type GuestGroup = 'Família Noiva' | 'Família Noivo' | 'Amigos' | 'Trabalho';
 
 export interface Guest {
-  id: number;
+  id?: number;
   name: string;
   group: GuestGroup;
   companions: number;
