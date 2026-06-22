@@ -2,186 +2,24 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from './task.service';
 
-@Component({
-  selector: 'app-task-list',
-  standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="container-fluid p-4 p-md-5 max-w-custom">
-      <div class="card bg-white border-0 shadow-sm rounded-4 p-4 mb-4 position-relative overflow-hidden">
-        <div class="position-absolute top-0 end-0 bg-wedding-accent rounded-circle opacity-10 blur-effect" style="width: 200px; height: 200px; margin-right: -50px; margin-top: -80px;"></div>
+ @Component({
+   selector: 'app-task-list',
+   standalone: true,
+   imports: [CommonModule],
+   changeDetection: ChangeDetectionStrategy.OnPush,
+   templateUrl: './task-list.component.html',
+   styleUrl: './task-list.component.css'
+ })
+ export class TaskListComponent {
+   taskService = inject(TaskService);
 
-        <div class="row align-items-center position-relative z-1">
-          <div class="col-md-8 mb-3 mb-md-0">
-            <h3 class="font-serif fs-4 text-dark mb-1">O seu progresso</h3>
-            <p class="text-muted small mb-3">Você concluiu {{ taskService.completedCount() }} de {{ taskService.totalCount() }} tarefas. Continue assim!</p>
-
-            <div class="d-flex align-items-center gap-3">
-              <div class="progress flex-grow-1" style="height: 12px; border-radius: 10px; background-color: #F4EFEA;">
-                <div class="progress-bar bg-wedding-primary" role="progressbar"
-                     [style.width.%]="taskService.progressPercentage()"
-                     [attr.aria-valuenow]="taskService.progressPercentage()" aria-valuemin="0" aria-valuemax="100"
-                     style="border-radius: 10px; transition: width 0.5s ease;"></div>
-              </div>
-              <span class="fw-bold text-wedding-primary">{{ taskService.progressPercentage() }}%</span>
-            </div>
-          </div>
-
-          <div class="col-md-4 d-flex justify-content-md-end gap-3">
-             <div class="text-center bg-wedding-light rounded-4 p-3 flex-grow-1 flex-md-grow-0 min-w-80 border border-white shadow-sm">
-                <span class="d-block font-serif fs-3 text-dark">{{ taskService.pendingCount() }}</span>
-                <span class="small text-muted text-uppercase fw-medium" style="font-size: 0.65rem;">Pendentes</span>
-             </div>
-             <div class="text-center bg-success bg-opacity-10 rounded-4 p-3 flex-grow-1 flex-md-grow-0 min-w-80 border border-white shadow-sm">
-                <span class="d-block font-serif fs-3 text-success">{{ taskService.completedCount() }}</span>
-                <span class="small text-success text-uppercase fw-medium" style="font-size: 0.65rem;">Concluídas</span>
-             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <ul class="nav custom-pills bg-white shadow-sm p-1 rounded-pill d-inline-flex">
-          <li class="nav-item">
-            <button class="nav-link rounded-pill border-0 px-4"
-                    [class.active]="taskService.currentFilter() === 'all'"
-                    (click)="taskService.setFilter('all')">Todas</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link rounded-pill border-0 px-4"
-                    [class.active]="taskService.currentFilter() === 'pending'"
-                    (click)="taskService.setFilter('pending')">Pendentes</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link rounded-pill border-0 px-4"
-                    [class.active]="taskService.currentFilter() === 'completed'"
-                    (click)="taskService.setFilter('completed')">Concluídas</button>
-          </li>
-        </ul>
-
-        <div class="d-flex gap-2">
-          <div class="position-relative">
-            <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
-            <input type="text" class="form-control rounded-pill ps-5 bg-white border-0 shadow-sm" placeholder="Buscar tarefa..." style="font-size: 0.9rem;">
-          </div>
-          <button class="btn btn-white border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center text-muted hover-primary" style="width: 38px; height: 38px;">
-            <i class="fa-solid fa-sort"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="d-flex flex-column gap-3">
-        @for (task of taskService.filteredTasks(); track task.id) {
-          <div class="card border-0 shadow-sm rounded-4 task-card overflow-hidden transition-all"
-               [class.opacity-75]="task.completed"
-               [class.bg-light]="task.completed">
-            <div class="card-body p-3 p-md-4 d-flex align-items-center gap-3 gap-md-4">
-
-              <div class="flex-shrink-0 cursor-pointer" (click)="taskService.toggleTask(task.id)">
-                <div class="custom-checkbox d-flex align-items-center justify-content-center border-2 rounded-circle"
-                     [class.checked]="task.completed"
-                     [class.border-wedding-primary]="task.completed"
-                     [class.border-secondary-subtle]="!task.completed"
-                     style="width: 28px; height: 28px;">
-                  @if (task.completed) {
-                    <i class="fa-solid fa-check text-white small"></i>
-                  }
-                </div>
-              </div>
-
-              <div class="flex-grow-1 cursor-pointer" (click)="taskService.toggleTask(task.id)">
-                <h5 class="mb-1 fs-6 fw-semibold text-transition"
-                    [class.text-decoration-line-through]="task.completed"
-                    [class.text-muted]="task.completed"
-                    [class.text-dark]="!task.completed">
-                  {{ task.title }}
-                </h5>
-
-                <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
-                  <span class="badge rounded-pill fw-medium px-2 py-1"
-                        [ngClass]="getCategoryBadgeClass(task.categoryTheme)"
-                        style="font-size: 0.7rem; letter-spacing: 0.3px;">
-                    {{ task.category }}
-                  </span>
-
-                  <span class="small d-flex align-items-center gap-1"
-                        [class.text-danger]="task.isOverdue && !task.completed"
-                        [class.fw-medium]="task.isOverdue && !task.completed"
-                        [class.text-muted]="!task.isOverdue || task.completed">
-                    <i class="fa-regular" [class.fa-calendar]="!task.isOverdue" [class.fa-clock]="task.isOverdue"></i>
-                    {{ task.date }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="flex-shrink-0">
-                <button class="btn btn-link text-muted hover-primary p-2 text-decoration-none action-btn-hover">
-                  <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <button class="btn btn-link text-muted hover-danger p-2 text-decoration-none action-btn-hover">
-                  <i class="fa-regular fa-trash-can"></i>
-                </button>
-              </div>
-
-            </div>
-          </div>
-        }
-
-        @if (taskService.filteredTasks().length === 0) {
-          <div class="text-center py-5">
-            <div class="rounded-circle bg-wedding-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
-              <i class="fa-solid fa-clipboard-check fs-1 text-wedding-primary opacity-50"></i>
-            </div>
-            <h4 class="font-serif fs-5 text-dark">Nenhuma tarefa encontrada</h4>
-            <p class="text-muted small">Tudo limpo por aqui! Aproveite para relaxar ou adicione novas tarefas.</p>
-          </div>
-        }
-      </div>
-    </div>
-  `,
-  styles: [`
-    .max-w-custom { max-width: 1200px; margin: 0 auto; }
-    .min-w-80 { min-width: 90px; }
-    .cursor-pointer { cursor: pointer; }
-    .transition-all { transition: all 0.25s ease; }
-    .text-transition { transition: color 0.2s ease, text-decoration 0.2s ease; }
-    .blur-effect { filter: blur(30px); -webkit-filter: blur(30px); }
-
-    .custom-pills .nav-link { color: #6c757d; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease; }
-    .custom-pills .nav-link:hover { color: var(--wedding-primary); }
-    .custom-pills .nav-link.active { background-color: var(--wedding-primary); color: white; box-shadow: 0 2px 4px rgba(212, 184, 177, 0.4); }
-
-    .hover-primary:hover { color: var(--wedding-primary) !important; }
-    .hover-danger:hover { color: #dc3545 !important; }
-
-    .action-btn-hover { opacity: 0; transition: opacity 0.2s; }
-    .task-card:hover .action-btn-hover { opacity: 1; }
-    @media (max-width: 768px) { .action-btn-hover { opacity: 1; } }
-
-    .custom-checkbox { background-color: transparent; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-    .custom-checkbox.checked { background-color: var(--wedding-primary); border-color: var(--wedding-primary) !important; transform: scale(1.05); }
-
-    .task-card { border: 1px solid transparent !important; }
-    .task-card:hover { border-color: var(--wedding-light) !important; transform: translateY(-2px); }
-
-    .badge-primary { background-color: rgba(212, 184, 177, 0.15); color: #B38B82; }
-    .badge-accent { background-color: rgba(163, 177, 155, 0.15); color: #7F8D77; }
-    .badge-warning { background-color: rgba(255, 193, 7, 0.15); color: #D39E00; }
-    .badge-info { background-color: rgba(13, 202, 240, 0.15); color: #0AA2C0; }
-    .badge-secondary { background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; }
-  `]
-})
-export class TaskListComponent {
-  taskService = inject(TaskService);
-
-  getCategoryBadgeClass(theme: string): string {
-    switch(theme) {
-      case 'primary': return 'badge-primary';
-      case 'accent': return 'badge-accent';
-      case 'warning': return 'badge-warning';
-      case 'info': return 'badge-info';
-      default: return 'badge-secondary';
-    }
-  }
-}
+   getCategoryBadgeClass(theme: string): string {
+     switch(theme) {
+       case 'primary': return 'badge-primary';
+       case 'accent': return 'badge-accent';
+       case 'warning': return 'badge-warning';
+       case 'info': return 'badge-info';
+       default: return 'badge-secondary';
+     }
+   }
+ }

@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, signal, computed, OnInit } from '@angular/core'; // 👈 Adicionei o OnInit
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TaskService } from '../tasks/task.service';
@@ -13,9 +13,16 @@ import { Vendor } from '../../models/wedding.model';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit { // 👈 Implementando OnInit
   taskService = inject(TaskService);
   guestService = inject(GuestService);
+
+  // 🚀 Assim que o dashboard abrir, ele pede os dados para o serviço
+  ngOnInit(): void {
+    this.guestService.getAllGuests().subscribe({
+      error: (err) => console.error('Erro ao buscar convidados para o dashboard', err)
+    });
+  }
 
   upcomingTasks = computed(() => {
     return this.taskService.tasks().filter(t => !t.completed).slice(0, 3);

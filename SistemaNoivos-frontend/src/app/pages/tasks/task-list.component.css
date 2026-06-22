@@ -1,0 +1,29 @@
+.max-w-custom { max-width: 1200px; margin: 0 auto; }
+.min-w-80 { min-width: 90px; }
+.cursor-pointer { cursor: pointer; }
+.transition-all { transition: all 0.25s ease; }
+.text-transition { transition: color 0.2s ease, text-decoration 0.2s ease; }
+.blur-effect { filter: blur(30px); -webkit-filter: blur(30px); }
+
+.custom-pills .nav-link { color: #6c757d; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease; }
+.custom-pills .nav-link:hover { color: var(--wedding-primary); }
+.custom-pills .nav-link.active { background-color: var(--wedding-primary); color: white; box-shadow: 0 2px 4px rgba(212, 184, 177, 0.4); }
+
+.hover-primary:hover { color: var(--wedding-primary) !important; }
+.hover-danger:hover { color: #dc3545 !important; }
+
+.action-btn-hover { opacity: 0; transition: opacity 0.2s; }
+.task-card:hover .action-btn-hover { opacity: 1; }
+@media (max-width: 768px) { .action-btn-hover { opacity: 1; } }
+
+.custom-checkbox { background-color: transparent; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+.custom-checkbox.checked { background-color: var(--wedding-primary); border-color: var(--wedding-primary) !important; transform: scale(1.05); }
+
+.task-card { border: 1px solid transparent !important; }
+.task-card:hover { border-color: var(--wedding-light) !important; transform: translateY(-2px); }
+
+.badge-primary { background-color: rgba(212, 184, 177, 0.15); color: #B38B82; }
+.badge-accent { background-color: rgba(163, 177, 155, 0.15); color: #7F8D77; }
+.badge-warning { background-color: rgba(255, 193, 7, 0.15); color: #D39E00; }
+.badge-info { background-color: rgba(13, 202, 240, 0.15); color: #0AA2C0; }
+.badge-secondary { background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; }
