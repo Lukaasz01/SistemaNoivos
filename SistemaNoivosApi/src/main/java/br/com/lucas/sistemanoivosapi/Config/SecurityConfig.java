@@ -13,12 +13,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Desabilita o CSRF para permitir POST/PUT/DELETE locais do Angular
-                .csrf(csrf -> csrf.disable())
-                // Libera todas as requisições para a nossa API de convidados sem exigir login na URL
+                .csrf(csrf -> csrf.disable()) // Desativa proteção CSRF para chamadas de API
+                .cors(cors -> cors.configure(http)) // Permite o Cross-Origin (CORS) que configuramos no Controller
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/guests/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // 👈 Libera todas as rotas (sem exigir senha)
                 );
 
         return http.build();

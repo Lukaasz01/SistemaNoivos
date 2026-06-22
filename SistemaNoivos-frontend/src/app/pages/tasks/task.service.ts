@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -14,11 +14,11 @@ export class TaskService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/tasks`;
 
-  // Estado Base inicializado vazio esperando o Java
+  // Inicializa o estado vazio, aguardando o banco de dados
   tasks = signal<Task[]>([]);
   currentFilter = signal<FilterType>('all');
 
-  // Computed Properties (Permanecem IGUAIS! A reatividade do Angular Signals faz a mágica)
+  // --- ESTATÍSTICAS E FILTROS COMPUTADOS ---
   filteredTasks = computed(() => {
     const filter = this.currentFilter();
     const allTasks = this.tasks();
@@ -38,36 +38,59 @@ export class TaskService {
     return Math.round((this.completedCount() / total) * 100);
   });
 
-  // --- CHAMADAS DA API JAVA ---
+  // --- AÇÕES LOCAIS ---
+  setFilter(filter: FilterType) {
+    this.currentFilter.set(filter);
+  }
 
-  // Buscar tarefas do PostgreSQL
+  // --- INTEGRAÇÃO COM O BACK-END (JAVA) ---
+
   getAllTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl).pipe(
       tap(dados => this.tasks.set(dados))
     );
   }
 
-  // Mudar status (concluir/desmarcar) salvando no banco
-  toggleTask(id: number): Observable<Task> {
-    const taskToUpdate = this.tasks().find(t => t.id === id);
-    if (!taskToUpdate) throw new Error('Tarefa não encontrada localmente');
+  addTask(taskData: Omit<Task, 'id'>): Observable<Task> {
+    return this.http.post<Task>(this.apiUrl, taskData).pipe(
+      tap(newTask => {
+        // Adiciona a nova tarefa no topo da lista local
+        this.tasks.update(allTasks => [newTask, ...allTasks]);
+      })
+    );
+  }
 
-    const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+  updateTask(id: number, updatedData: Partial<Task>): Observable<Task> {
+    // Busca a tarefa local primeiro para mesclar com os novos dados
+    const currentTask = this.tasks().find(t => t.id === id);
+    if (!currentTask) throw new Error('Tarefa não encontrada localmente');
+
+    const taskToSave = { ...currentTask, ...updatedData };
+
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, taskToSave).pipe(
+      tap(updatedTask => {
+        this.tasks.update(tasks => tasks.map(t => t.id === id ? updatedTask : t));
+      })
+    );
+  }
+
+  toggleTask(id: number): Observable<Task> {
+    const taskToToggle = this.tasks().find(t => t.id === id);
+    if (!taskToToggle) throw new Error('Tarefa não encontrada localmente');
+
+    // Inverte o status de completed
+    const updatedTask = { ...taskToToggle, completed: !taskToToggle.completed };
 
     return this.http.put<Task>(`${this.apiUrl}/${id}`, updatedTask).pipe(
-      tap(taskSalva => {
-        this.tasks.update(lista => lista.map(t => t.id === id ? taskSalva : t));
+      tap(taskSalvaNoBanco => {
+        this.tasks.update(tasks => tasks.map(t => t.id === id ? taskSalvaNoBanco : t));
       })
     );
   }
 
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.tasks.update(lista => lista.filter(t => t.id !== id)))
+      tap(() => this.tasks.update(tasks => tasks.filter(t => t.id !== id)))
     );
-  }
-
-  setFilter(filter: FilterType) {
-    this.currentFilter.set(filter);
   }
 }
