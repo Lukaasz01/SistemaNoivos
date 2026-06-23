@@ -1,51 +1,47 @@
 <div class="container-fluid p-4 p-md-5 d-flex flex-column align-items-center">
 
-  <div class="w-100 max-w-settings mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-bottom pb-3">
-    <div>
-      <h3 class="font-serif fs-4 text-dark m-0">Preferências do Sistema</h3>
-      <p class="text-muted small m-0">Personalize a sua experiência no painel do casamento.</p>
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" class="w-100 max-w-settings">
+
+    <div class="w-100 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-bottom pb-3">
+      <div>
+        <h3 class="font-serif fs-4 text-dark m-0">Preferências do Sistema</h3>
+        <p class="text-muted small m-0">Personalize a sua experiência no painel do casamento.</p>
+      </div>
+
+      <button type="submit" class="btn btn-wedding-primary text-white rounded-pill shadow-sm px-4 d-flex align-items-center gap-2 align-self-md-center align-self-start">
+        <i class="fa-solid fa-check"></i> Salvar Alterações
+      </button>
     </div>
 
-    <button class="btn btn-wedding-primary text-white rounded-pill shadow-sm px-4 d-flex align-items-center gap-2 align-self-md-center align-self-start" (click)="saveSettings()">
-      <i class="fa-solid fa-check"></i> Salvar Alterações
-    </button>
-  </div>
-
-  <div class="w-100 max-w-settings mb-4 d-flex justify-content-between align-items-center">
-    <ul class="nav custom-pills bg-white shadow-sm p-1 rounded-pill d-inline-flex flex-nowrap overflow-x-auto hide-scroll w-100 w-md-auto">
-      <li class="nav-item flex-grow-1 flex-md-grow-0">
-        <button class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
-                [class.active]="activeTab() === 'geral'"
-                (click)="setTab('geral')">Geral</button>
-      </li>
-      <li class="nav-item flex-grow-1 flex-md-grow-0">
-        <button class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
-                [class.active]="activeTab() === 'notificacoes'"
-                (click)="setTab('notificacoes')">Notificações</button>
-      </li>
-      <li class="nav-item flex-grow-1 flex-md-grow-0">
-        <button class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
-                [class.active]="activeTab() === 'colaboradores'"
-                (click)="setTab('colaboradores')">Acessos</button>
-      </li>
-    </ul>
-  </div>
-
-  <div class="w-100 max-w-settings">
+    <div class="w-100 mb-4 d-flex justify-content-between align-items-center">
+      <ul class="nav custom-pills bg-white shadow-sm p-1 rounded-pill d-inline-flex flex-nowrap overflow-x-auto hide-scroll w-100 w-md-auto">
+        <li class="nav-item flex-grow-1 flex-md-grow-0">
+          <button type="button" class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
+                  [class.active]="activeTab() === 'geral'" (click)="setTab('geral')">Geral</button>
+        </li>
+        <li class="nav-item flex-grow-1 flex-md-grow-0">
+          <button type="button" class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
+                  [class.active]="activeTab() === 'notificacoes'" (click)="setTab('notificacoes')">Notificações</button>
+        </li>
+        <li class="nav-item flex-grow-1 flex-md-grow-0">
+          <button type="button" class="nav-link rounded-pill border-0 px-4 whitespace-nowrap w-100"
+                  [class.active]="activeTab() === 'colaboradores'" (click)="setTab('colaboradores')">Acessos</button>
+        </li>
+      </ul>
+    </div>
 
     @if (activeTab() === 'geral') {
     <div class="animation-fade-in d-flex flex-column gap-4">
 
       <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
         <h4 class="font-serif fs-5 text-dark mb-4 border-bottom pb-3">Perfil dos Noivos</h4>
-
         <div class="row g-4 align-items-center">
           <div class="col-12 col-md-auto text-center text-md-start">
             <div class="position-relative d-inline-block">
               <div class="rounded-circle overflow-hidden shadow border border-4 border-white mx-auto" style="width: 130px; height: 130px; background-color: #D4B8B1;">
                 <img src="https://placehold.co/200x200/D4B8B1/ffffff?text=A+&+C" alt="Foto do Casal" class="w-100 h-100 object-fit-cover">
               </div>
-              <button class="btn btn-sm btn-wedding-primary text-white rounded-circle position-absolute bottom-0 end-0 p-2 shadow" style="width: 38px; height: 38px; transform: translate(-10px, -5px);">
+              <button type="button" class="btn btn-sm btn-wedding-primary text-white rounded-circle position-absolute bottom-0 end-0 p-2 shadow" style="width: 38px; height: 38px; transform: translate(-10px, -5px);">
                 <i class="fa-solid fa-camera small"></i>
               </button>
             </div>
@@ -55,15 +51,15 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Nome da Noiva</label>
-                <input type="text" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" value="Ana Beatriz Silva">
+                <input type="text" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" formControlName="brideName">
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Nome do Noivo</label>
-                <input type="text" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" value="Carlos Eduardo Almeida">
+                <input type="text" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" formControlName="groomName">
               </div>
               <div class="col-12">
                 <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">E-mail de Contato Principal</label>
-                <input type="email" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" value="nosso@casamento.com.br">
+                <input type="email" class="form-control form-control-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" formControlName="email">
               </div>
             </div>
           </div>
@@ -72,30 +68,29 @@
 
       <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
         <h4 class="font-serif fs-5 text-dark mb-4 border-bottom pb-3">O Grande Dia</h4>
-
         <div class="row g-4">
           <div class="col-md-6">
-            <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Data do Casamento</label>
+            <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Data e Horário do Casamento</label>
             <div class="input-group input-group-lg">
               <span class="input-group-text bg-light border-light text-muted rounded-start-3 px-4"><i class="fa-regular fa-calendar"></i></span>
-              <input type="date" class="form-control border-light bg-light bg-opacity-50 rounded-end-3 fs-6" value="2026-10-12">
+              <input type="datetime-local" class="form-control border-light bg-light bg-opacity-50 rounded-end-3 fs-6" formControlName="weddingDate">
             </div>
           </div>
           <div class="col-md-6">
             <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Local / Cidade</label>
             <div class="input-group input-group-lg">
               <span class="input-group-text bg-light border-light text-muted rounded-start-3 px-4"><i class="fa-solid fa-location-dot"></i></span>
-              <input type="text" class="form-control border-light bg-light bg-opacity-50 rounded-end-3 fs-6" value="Fazenda Santa Bárbara, SP">
+              <input type="text" class="form-control border-light bg-light bg-opacity-50 rounded-end-3 fs-6" formControlName="weddingLocation">
             </div>
           </div>
           <div class="col-12">
             <label class="form-label small fw-bold text-muted text-uppercase tracking-wider">Estilo do Evento</label>
-            <select class="form-select form-select-lg rounded-3 border-light bg-light bg-opacity-50 fs-6">
-              <option>Clássico / Tradicional</option>
-              <option selected>Rústico / Campo</option>
-              <option>Praia</option>
-              <option>Mini Wedding</option>
-              <option>Moderno / Industrial</option>
+            <select class="form-select form-select-lg rounded-3 border-light bg-light bg-opacity-50 fs-6" formControlName="eventStyle">
+              <option value="Clássico / Tradicional">Clássico / Tradicional</option>
+              <option value="Rústico / Campo">Rústico / Campo</option>
+              <option value="Praia">Praia</option>
+              <option value="Mini Wedding">Mini Wedding</option>
+              <option value="Moderno / Industrial">Moderno / Industrial</option>
             </select>
           </div>
         </div>
@@ -111,7 +106,7 @@
       <div class="d-flex flex-column gap-3">
         <div class="d-flex align-items-center justify-content-between p-3 rounded-4 bg-light bg-opacity-25 border border-light transition-all hover-shadow">
           <div class="d-flex align-items-center gap-3">
-            <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle" style="width: 50px; height: 50px;">
+            <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="fa-brands fa-whatsapp fs-4"></i>
             </div>
             <div>
@@ -120,13 +115,13 @@
             </div>
           </div>
           <div class="form-check form-switch custom-switch fs-5 m-0">
-            <input class="form-check-input cursor-pointer" type="checkbox" checked>
+            <input class="form-check-input cursor-pointer" type="checkbox" formControlName="whatsappNotifications">
           </div>
         </div>
 
         <div class="d-flex align-items-center justify-content-between p-3 rounded-4 bg-light bg-opacity-25 border border-light transition-all hover-shadow">
           <div class="d-flex align-items-center gap-3">
-            <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle" style="width: 50px; height: 50px;">
+            <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="fa-regular fa-envelope fs-4"></i>
             </div>
             <div>
@@ -135,13 +130,13 @@
             </div>
           </div>
           <div class="form-check form-switch custom-switch fs-5 m-0">
-            <input class="form-check-input cursor-pointer" type="checkbox" checked>
+            <input class="form-check-input cursor-pointer" type="checkbox" formControlName="weeklyReport">
           </div>
         </div>
 
         <div class="d-flex align-items-center justify-content-between p-3 rounded-4 bg-light bg-opacity-25 border border-light transition-all hover-shadow">
           <div class="d-flex align-items-center gap-3">
-            <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-circle" style="width: 50px; height: 50px;">
+            <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="fa-solid fa-coins fs-4"></i>
             </div>
             <div>
@@ -150,7 +145,7 @@
             </div>
           </div>
           <div class="form-check form-switch custom-switch fs-5 m-0">
-            <input class="form-check-input cursor-pointer" type="checkbox">
+            <input class="form-check-input cursor-pointer" type="checkbox" formControlName="budgetAlerts">
           </div>
         </div>
       </div>
@@ -164,7 +159,7 @@
           <h4 class="font-serif fs-5 text-dark m-0 mb-1">Equipe de Planejamento</h4>
           <p class="text-muted small m-0">Quem tem acesso ao seu painel do casamento.</p>
         </div>
-        <button class="btn btn-outline-wedding rounded-pill px-4 fw-medium text-nowrap">
+        <button type="button" class="btn btn-outline-wedding rounded-pill px-4 fw-medium text-nowrap">
           <i class="fa-solid fa-user-plus me-2"></i> Convidar Pessoa
         </button>
       </div>
@@ -179,8 +174,8 @@
                   AC
                 </div>
                 <div>
-                  <p class="m-0 fw-semibold text-dark">Ana & Carlos <span class="badge bg-light text-muted ms-2 rounded-pill fw-normal">Você</span></p>
-                  <p class="m-0 small text-muted">nosso&#64;casamento.com.br</p>
+                  <p class="m-0 fw-semibold text-dark">{{ settingsService.brideName().substring(0,3) }} & {{ settingsService.groomName().substring(0,3) }} <span class="badge bg-light text-muted ms-2 rounded-pill fw-normal">Você</span></p>
+                  <p class="m-0 small text-muted">{{ settingsService.email() }}</p>
                 </div>
               </div>
             </td>
@@ -245,5 +240,6 @@
       </div>
     </div>
     }
-  </div>
+
+  </form>
 </div>
