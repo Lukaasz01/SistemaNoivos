@@ -1,55 +1,72 @@
-import { Component, inject, ChangeDetectionStrategy, signal, computed, OnInit } from '@angular/core'; // 👈 Adicionei o OnInit
+import { Component, inject, ChangeDetectionStrategy, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TaskService } from '../tasks/task.service';
 import { GuestService } from '../guests/guest.service';
-import { Vendor } from '../../models/wedding.model';
+import { VendorService } from '../vendors/vendor.service';
+import { BudgetService } from '../budget/budget.service';
+import { VendorStatus } from '../../models/wedding.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, DecimalPipe],
+  imports: [CommonModule, RouterLink, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit { // 👈 Implementando OnInit
+export class DashboardComponent implements OnInit {
   taskService = inject(TaskService);
   guestService = inject(GuestService);
+  vendorService = inject(VendorService);
+  budgetService = inject(BudgetService);
 
-  // 🚀 Assim que o dashboard abrir, ele pede os dados para o serviço
   ngOnInit(): void {
-    this.guestService.getAllGuests().subscribe({
-      error: (err) => console.error('Erro ao buscar convidados para o dashboard', err)
-    });
+    this.taskService.getAllTasks().subscribe();
+    this.guestService.getAllGuests().subscribe();
+    this.vendorService.getAllVendors().subscribe();
+    this.budgetService.getAllExpenses().subscribe();
   }
 
   upcomingTasks = computed(() => {
-    return this.taskService.tasks().filter(t => !t.completed).slice(0, 3);
+    return this.taskService.tasks().filter(t => !t.completed).slice(0, 4);
   });
 
-  budget = signal({
-    spent: 45200,
-    estimated: 75000,
-    percentage: 60
+  budgetSummary = computed(() => {
+    const summary = this.budgetService.summary();
+    const spent = summary.actual;
+    const estimated = summary.estimated;
+    const percentage = estimated > 0 ? Math.min(Math.round((spent / estimated) * 100), 100) : 0;
+
+    return { spent, estimated, percentage };
   });
 
-  // Lista de fornecedores do resumo atualizada para o novo modelo estrito
-  vendors = signal<Vendor[]>([
-    {
-      id: 1, name: 'Studio Luz', category: 'Fotografia', status: 'Contratado',
-      contactName: 'Marcos Santos', phone: '(11) 99999-3333', cost: 8200, rating: 4, isFavorite: true,
-      icon: 'fa-solid fa-camera', iconColor: 'text-success', bgClass: 'bg-success bg-opacity-10', badgeClass: 'bg-success bg-opacity-25 text-success'
-    },
-    {
-      id: 2, name: 'Banda Viva', category: 'Música', status: 'Contratado',
-      contactName: 'Rafa & Banda', phone: '(11) 99999-4444', cost: 5000, rating: 4, isFavorite: false,
-      icon: 'fa-solid fa-music', iconColor: 'text-primary', bgClass: 'bg-primary bg-opacity-10', badgeClass: 'bg-success bg-opacity-25 text-success'
-    },
-    {
-      id: 3, name: 'A definir', category: 'Buffet', status: 'Orçando',
-      contactName: '-', phone: '-', cost: 0, rating: 0, isFavorite: false,
-      icon: 'fa-solid fa-cake-candles', iconColor: 'text-warning', bgClass: 'bg-warning bg-opacity-10', badgeClass: 'bg-warning bg-opacity-25 text-warning'
+  topBudgetCategories = computed(() => {
+    return this.budgetService.categoryBreakdown().slice(0, 2);
+  });
+
+  dashboardVendors = computed(() => {
+    return this.vendorService.vendors().slice(0, 6);
+  });
+
+  getVendorIconStyles(category: string) {
+    switch(category) {
+      case 'Fotografia': case 'Foto & Vídeo': return { icon: 'fa-camera', color: 'text-success', bg: 'bg-success bg-opacity-10' };
+      case 'Música': return { icon: 'fa-music', color: 'text-primary', bg: 'bg-primary bg-opacity-10' };
+      case 'Buffet': case 'Espaço & Buffet': return { icon: 'fa-utensils', color: 'text-warning', bg: 'bg-warning bg-opacity-10' };
+      case 'Decoração': return { icon: 'fa-wand-magic-sparkles', color: 'text-info', bg: 'bg-info bg-opacity-10' };
+      case 'Espaço': return { icon: 'fa-tree', color: 'text-success', bg: 'bg-success bg-opacity-10' };
+      case 'Trajes': return { icon: 'fa-shirt', color: 'text-danger', bg: 'bg-danger bg-opacity-10' };
+      case 'Assessoria': return { icon: 'fa-gem', color: 'text-secondary', bg: 'bg-secondary bg-opacity-10' };
+      default: return { icon: 'fa-store', color: 'text-dark', bg: 'bg-light' };
     }
-  ]);
+  }
+
+  getVendorBadgeClass(status: VendorStatus): string {
+    switch (status) {
+      case 'Contratado': return 'bg-success bg-opacity-25 text-success';
+      case 'Em Negociação': return 'bg-warning bg-opacity-25 text-warning';
+      case 'Orçando': return 'bg-secondary bg-opacity-25 text-secondary';
+    }
+  }
 }

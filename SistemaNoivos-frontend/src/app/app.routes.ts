@@ -7,11 +7,17 @@ import { VendorListComponent } from './pages/vendors/vendor-list.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
+  // Rota inicial redireciona para o dashboard de forma limpa
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+  // Caminhos oficiais do seu ecossistema
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'tasks', component: TaskListComponent },
   { path: 'guests', component: GuestListComponent },
   { path: 'budget', component: BudgetListComponent },
   { path: 'vendors', component: VendorListComponent },
   { path: 'settings', component: SettingsComponent },
-  { path: '**', redirectTo: '' }
+
+  // Rota curinga: se o usuário digitar qualquer coisa errada, volta para o início
+  { path: '**', redirectTo: 'dashboard' }
 ];
