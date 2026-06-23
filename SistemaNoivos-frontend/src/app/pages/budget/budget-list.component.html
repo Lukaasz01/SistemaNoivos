@@ -1,7 +1,6 @@
 <div class="container-fluid p-4 p-md-5 max-w-custom">
 
   <div class="row g-3 g-md-4 mb-4">
-
     <div class="col-6 col-lg-3">
       <div class="card bg-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4">
         <div class="d-flex align-items-center gap-2 mb-3">
@@ -70,14 +69,12 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="row g-4">
     <div class="col-12 col-xl-4 d-flex">
       <div class="card bg-white border-0 shadow-sm rounded-4 w-100 p-4">
         <h4 class="font-serif fs-5 text-dark mb-4">Gastos por Categoria</h4>
-
         <div class="d-flex flex-column gap-4">
           @for (cat of budgetService.categoryBreakdown(); track cat.name) {
           <div>
@@ -107,12 +104,18 @@
       <div class="card bg-white border-0 shadow-sm rounded-4 w-100 overflow-hidden d-flex flex-column">
         <div class="p-4 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 bg-light bg-opacity-50">
           <h4 class="font-serif fs-5 text-dark m-0">Detalhamento</h4>
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 align-items-center">
             <div class="position-relative">
               <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
               <input type="text" class="form-control rounded-pill ps-5 bg-white shadow-sm border-0"
-                     placeholder="Buscar despesa..." style="font-size: 0.85rem; width: 220px;">
+                     placeholder="Buscar despesa..." style="font-size: 0.85rem; width: 220px; height: 38px;">
             </div>
+
+            <button class="btn rounded-pill px-4 text-white shadow-sm whitespace-nowrap"
+                    data-bs-toggle="modal" data-bs-target="#addExpenseModal" (click)="resetForm()"
+                    style="background-color: #B38B82; border-color: #B38B82; font-size: 0.85rem; height: 38px;">
+              <i class="fa-solid fa-plus me-2"></i> Nova Despesa
+            </button>
           </div>
         </div>
 
@@ -120,13 +123,13 @@
           <table class="table table-hover align-middle m-0 text-nowrap">
             <thead class="table-light text-muted small text-uppercase tracking-wide" style="font-size: 0.65rem;">
             <tr>
-              <th scope="col" class="ps-4 py-3 fw-medium border-0 rounded-top-start">Descrição</th>
+              <th scope="col" class="ps-4 py-3 fw-medium border-0">Descrição</th>
               <th scope="col" class="py-3 fw-medium border-0">Categoria</th>
               <th scope="col" class="py-3 fw-medium border-0 text-end">Estimado</th>
               <th scope="col" class="py-3 fw-medium border-0 text-end">Real</th>
               <th scope="col" class="py-3 fw-medium border-0 text-end">Já Pago</th>
               <th scope="col" class="py-3 fw-medium border-0 text-center">Status</th>
-              <th scope="col" class="pe-4 py-3 fw-medium border-0 text-end rounded-top-end"></th>
+              <th scope="col" class="pe-4 py-3 fw-medium border-0 text-end">Ações</th>
             </tr>
             </thead>
             <tbody class="border-top-0">
@@ -136,18 +139,18 @@
                 <p class="m-0 fw-semibold text-dark fs-6">{{ expense.description }}</p>
                 @if (expense.actualCost > expense.estimatedCost) {
                 <span class="text-danger d-flex align-items-center gap-1 mt-1" style="font-size: 0.65rem;">
-                        <i class="fa-solid fa-circle-exclamation"></i> Ultrapassou a estimativa
-                      </span>
+                  <i class="fa-solid fa-circle-exclamation"></i> Ultrapassou a estimativa
+                </span>
                 } @else if (expense.actualCost < expense.estimatedCost && expense.actualCost > 0) {
                 <span class="text-success d-flex align-items-center gap-1 mt-1" style="font-size: 0.65rem;">
-                        <i class="fa-solid fa-piggy-bank"></i> Economia gerada
-                      </span>
+                  <i class="fa-solid fa-piggy-bank"></i> Economia gerada
+                </span>
                 }
               </td>
               <td class="py-3 border-light">
-                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill px-2 py-1 fw-medium" style="font-size: 0.65rem;">
-                      {{ expense.category }}
-                    </span>
+                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill px-2 py-1 fw-medium" style="font-size: 0.65rem;">
+                  {{ expense.category }}
+                </span>
               </td>
               <td class="py-3 border-light text-end text-muted font-monospace small">
                 {{ expense.estimatedCost | number:'1.2-2' }}
@@ -165,21 +168,97 @@
                 </div>
               </td>
               <td class="py-3 border-light text-center">
-                    <span class="badge rounded-pill px-2 py-1 fw-semibold" style="font-size: 0.65rem;"
-                          [ngClass]="getPaymentStatusClass(getExpenseStatus(expense))">
-                      {{ getExpenseStatus(expense) }}
-                    </span>
+                <span class="badge rounded-pill px-2 py-1 fw-semibold" style="font-size: 0.65rem;"
+                      [ngClass]="getPaymentStatusClass(getExpenseStatus(expense))">
+                  {{ getExpenseStatus(expense) }}
+                </span>
               </td>
               <td class="pe-4 py-3 border-light text-end">
-                <button class="btn btn-sm btn-link text-muted hover-primary text-decoration-none">
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
+                <div class="d-flex gap-1 justify-content-end">
+                  <button class="btn btn-sm btn-outline-secondary border-0 rounded-circle d-flex align-items-center justify-content-center hover-primary"
+                          (click)="openEditModal(expense)" style="width: 32px; height: 32px;">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger border-0 rounded-circle d-flex align-items-center justify-content-center"
+                          (click)="deleteExpense(expense.id!)" style="width: 32px; height: 32px;">
+                    <i class="fa-regular fa-trash-can"></i>
+                  </button>
+                </div>
               </td>
             </tr>
             }
             </tbody>
           </table>
         </div>
+
+        @if (budgetService.expenses().length === 0) {
+        <div class="text-center py-5 bg-white">
+          <div class="rounded-circle bg-wedding-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 65px; height: 65px;">
+            <i class="fa-solid fa-piggy-bank fs-4 text-wedding-primary opacity-50"></i>
+          </div>
+          <h5 class="text-dark">Nenhuma despesa cadastrada</h5>
+          <p class="text-muted small">Adicione os custos para controlar o orçamento do seu grande dia.</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-2 ms-2">
+        <h5 class="modal-title fw-bold" id="addExpenseModalLabel" style="color: #4A4A4A;">
+          {{ editingExpenseId ? 'Editar Gasto' : 'Novo Gasto' }}
+        </h5>
+        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Descrição da Despesa *</label>
+            <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="description" placeholder="Ex: Fotógrafo + Drone">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Categoria *</label>
+            <select class="form-select rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="category">
+              <option value="Espaço & Buffet">Espaço & Buffet</option>
+              <option value="Decoração">Decoração</option>
+              <option value="Foto & Vídeo">Foto & Vídeo</option>
+              <option value="Trajes">Trajes</option>
+              <option value="Música">Música</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-4">
+              <label class="form-label text-muted small fw-medium">Estimado (R$)*</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="estimatedCost">
+            </div>
+            <div class="col-4">
+              <label class="form-label text-muted small fw-medium">Real (R$)*</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="actualCost">
+            </div>
+            <div class="col-4">
+              <label class="form-label text-muted small fw-medium">Já Pago (R$)*</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="paidAmount">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+            <button type="button" class="btn btn-light rounded-pill px-4 fw-medium" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn rounded-pill px-4 shadow-sm text-white fw-medium" [disabled]="expenseForm.invalid" style="background-color: #B38B82; border-color: #B38B82;">
+              {{ editingExpenseId ? 'Salvar Alterações' : 'Salvar Despesa' }}
+            </button>
+          </div>
+
+        </form>
       </div>
     </div>
   </div>
