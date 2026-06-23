@@ -1,7 +1,6 @@
 <div class="container-fluid p-4 p-md-5 max-w-custom">
 
   <div class="row g-3 g-md-4 mb-4">
-
     <div class="col-6 col-lg-3">
       <div class="card bg-white border-0 shadow-sm rounded-4 h-100 p-3 p-md-4">
         <div class="d-flex align-items-center gap-2 mb-3">
@@ -62,45 +61,41 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="card bg-white border-0 shadow-sm rounded-4 p-4 mb-4">
-    <div class="row g-3 align-items-center justify-content-between">
+    <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
 
-      <div class="col-12 col-md-4">
-        <div class="position-relative">
-          <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
-          <input type="text" class="form-control rounded-pill ps-5 bg-light border-0"
-                 placeholder="Buscar por empresa ou contato..."
-                 [value]="vendorService.searchQuery()"
-                 (input)="onSearchInput($event)">
-        </div>
+      <div class="position-relative flex-grow-1" style="max-width: 450px;">
+        <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
+        <input type="text" class="form-control rounded-pill ps-5 bg-light border-0 py-2"
+               placeholder="Buscar por empresa ou contato..."
+               [value]="vendorService.searchQuery()"
+               (input)="onSearchInput($event)">
       </div>
 
-      <div class="col-12 col-md-auto">
-        <ul class="nav custom-pills bg-light p-1 rounded-pill d-inline-flex w-100 w-md-auto text-center">
-          <li class="nav-item flex-grow-1 flex-md-grow-0">
-            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
-                    [class.active]="vendorService.currentFilter() === 'all'"
-                    (click)="vendorService.setFilter('all')">Todos</button>
+      <div class="d-flex flex-column flex-md-row gap-2 align-items-center flex-shrink-0">
+        <ul class="nav custom-pills bg-light p-1 rounded-pill d-flex flex-nowrap overflow-x-auto text-center hide-scroll" style="white-space: nowrap;">
+          <li class="nav-item">
+            <button class="nav-link rounded-pill border-0 px-3 py-2" [class.active]="vendorService.currentFilter() === 'all'" (click)="vendorService.setFilter('all')">Todos</button>
           </li>
-          <li class="nav-item flex-grow-1 flex-md-grow-0">
-            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
-                    [class.active]="vendorService.currentFilter() === 'Contratado'"
-                    (click)="vendorService.setFilter('Contratado')">Contratados</button>
+          <li class="nav-item">
+            <button class="nav-link rounded-pill border-0 px-3 py-2" [class.active]="vendorService.currentFilter() === 'Contratado'" (click)="vendorService.setFilter('Contratado')">Contratados</button>
           </li>
-          <li class="nav-item flex-grow-1 flex-md-grow-0">
-            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
-                    [class.active]="vendorService.currentFilter() === 'Em Negociação'"
-                    (click)="vendorService.setFilter('Em Negociação')">Em Negociação</button>
+          <li class="nav-item">
+            <button class="nav-link rounded-pill border-0 px-3 py-2" [class.active]="vendorService.currentFilter() === 'Em Negociação'" (click)="vendorService.setFilter('Em Negociação')">Em Negociação</button>
           </li>
-          <li class="nav-item flex-grow-1 flex-md-grow-0">
-            <button class="nav-link rounded-pill border-0 px-3 px-md-4 py-2 w-100"
-                    [class.active]="vendorService.currentFilter() === 'Favorites'"
-                    (click)="vendorService.setFilter('Favorites')"><i class="fa-solid fa-heart me-1"></i> Favoritos</button>
+          <li class="nav-item">
+            <button class="nav-link rounded-pill border-0 px-3 py-2" [class.active]="vendorService.currentFilter() === 'Favorites'" (click)="vendorService.setFilter('Favorites')"><i class="fa-solid fa-heart me-1"></i> Favoritos</button>
           </li>
         </ul>
+
+        <button class="btn rounded-pill px-4 text-white shadow-sm flex-shrink-0"
+                data-bs-toggle="modal" data-bs-target="#addVendorModal"
+                (click)="resetForm()"
+                style="background-color: #B38B82; border-color: #B38B82; height: 42px;">
+          <i class="fa-solid fa-plus me-2"></i> Adicionar
+        </button>
       </div>
 
     </div>
@@ -112,7 +107,7 @@
       <div class="card border-0 shadow-sm rounded-4 h-100 vendor-detail-card overflow-hidden transition-all bg-white position-relative">
 
         <button class="btn border-0 position-absolute end-0 top-0 m-3 favorite-btn z-1"
-                (click)="toggleFavorite($event, vendor.id)">
+                (click)="toggleFavorite($event, vendor.id!)">
           <i class="fa-heart fs-5 transition-colors"
              [class.fa-solid]="vendor.isFavorite"
              [class.fa-regular]="!vendor.isFavorite"
@@ -155,21 +150,29 @@
                 {{ vendor.status }}
               </button>
               <ul class="dropdown-menu border-0 shadow-sm rounded-3 text-sm">
-                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Contratado')"><i class="fa-solid fa-circle text-success" style="font-size: 0.5rem;"></i> Contratado</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Em Negociação')"><i class="fa-solid fa-circle text-warning" style="font-size: 0.5rem;"></i> Em Negociação</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id, 'Orçando')"><i class="fa-solid fa-circle text-secondary" style="font-size: 0.5rem;"></i> Orçando</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id!, 'Contratado')"><i class="fa-solid fa-circle text-success" style="font-size: 0.5rem;"></i> Contratado</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id!, 'Em Negociação')"><i class="fa-solid fa-circle text-warning" style="font-size: 0.5rem;"></i> Em Negociação</a></li>
+                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" (click)="changeStatus($event, vendor.id!, 'Orçando')"><i class="fa-solid fa-circle text-secondary" style="font-size: 0.5rem;"></i> Orçando</a></li>
               </ul>
             </div>
 
             <div class="d-flex gap-1">
-              <a [href]="'https://wa.me/' + vendor.phone" target="_blank"
+              @if (vendor.phone) {
+              <a [href]="'https://wa.me/' + vendor.phone.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')" target="_blank"
                  class="btn btn-sm btn-outline-success border-0 rounded-circle d-flex align-items-center justify-content-center"
                  style="width: 32px; height: 32px;" title="Conversar no WhatsApp">
                 <i class="fa-brands fa-whatsapp fs-5"></i>
               </a>
-              <button class="btn btn-sm btn-outline-secondary border-0 rounded-circle d-flex align-items-center justify-content-center"
-                      style="width: 32px; height: 32px;" title="Configurações">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
+              }
+
+              <button class="btn btn-sm btn-outline-secondary border-0 rounded-circle d-flex align-items-center justify-content-center hover-primary"
+                      (click)="openEditModal(vendor)" style="width: 32px; height: 32px;" title="Editar">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+
+              <button class="btn btn-sm btn-outline-danger border-0 rounded-circle d-flex align-items-center justify-content-center"
+                      (click)="deleteVendor(vendor.id!)" style="width: 32px; height: 32px;" title="Excluir">
+                <i class="fa-regular fa-trash-can"></i>
               </button>
             </div>
           </div>
@@ -179,8 +182,6 @@
     </div>
     }
 
-    @for (vendor of vendorService.filteredVendors(); track vendor.id) {
-    }
     @if (vendorService.filteredVendors().length === 0) {
     <div class="col-12">
       <div class="text-center py-5 bg-white rounded-4 shadow-sm">
@@ -194,4 +195,80 @@
     }
   </div>
 
+</div>
+
+<div class="modal fade" id="addVendorModal" tabindex="-1" aria-labelledby="addVendorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 rounded-4 shadow">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-2 ms-2">
+        <h5 class="modal-title fw-bold" id="addVendorModalLabel" style="color: #4A4A4A;">
+          {{ editingVendorId ? 'Editar Fornecedor' : 'Novo Fornecedor' }}
+        </h5>
+        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()">
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Empresa / Nome Fantasia *</label>
+              <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="name" placeholder="Ex: Fasano Gourmet">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Categoria *</label>
+              <select class="form-select rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="category">
+                <option value="Espaço">Espaço</option>
+                <option value="Buffet">Buffet</option>
+                <option value="Fotografia">Fotografia</option>
+                <option value="Música">Música</option>
+                <option value="Decoração">Decoração</option>
+                <option value="Trajes">Trajes</option>
+                <option value="Assessoria">Assessoria</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Nome do Contato *</label>
+              <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="contactName" placeholder="Ex: Juliana Torres">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-medium">Telefone / WhatsApp *</label>
+              <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="phone" placeholder="(11) 99999-9999" appPhoneMask maxlength="15">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label text-muted small fw-medium">Status *</label>
+              <select class="form-select rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="status">
+                <option value="Orçando">Orçando</option>
+                <option value="Em Negociação">Em Negociação</option>
+                <option value="Contratado">Contratado</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted small fw-medium">Custo / Valor (R$) *</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="cost" placeholder="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted small fw-medium">Avaliação (1 a 5) *</label>
+              <input type="number" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle" formControlName="rating" min="1" max="5">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+            <button type="button" class="btn btn-light rounded-pill px-4 fw-medium" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn rounded-pill px-4 shadow-sm text-white fw-medium" [disabled]="vendorForm.invalid" style="background-color: #B38B82; border-color: #B38B82;">
+              {{ editingVendorId ? 'Salvar Alterações' : 'Salvar Fornecedor' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
