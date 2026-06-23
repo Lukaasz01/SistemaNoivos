@@ -1,6 +1,5 @@
 <div class="container-fluid p-4 p-md-5 max-w-custom">
 
-  <!-- HEADER / DATA DO CASAMENTO -->
   <div class="card bg-wedding-light border-0 shadow-sm rounded-4 overflow-hidden position-relative mb-4">
     <div class="position-absolute top-0 end-0 bg-wedding-primary rounded-circle opacity-25 blur-effect" style="width: 250px; height: 250px; margin-right: -100px; margin-top: -100px;"></div>
     <div class="position-absolute bottom-0 start-0 bg-wedding-accent rounded-circle opacity-25 blur-effect" style="width: 150px; height: 150px; margin-left: -50px; margin-bottom: -50px;"></div>
@@ -8,24 +7,34 @@
     <div class="card-body p-4 p-md-5 position-relative z-1 d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
       <div>
         <p class="text-wedding-primary fw-bold small text-uppercase tracking-wide mb-2">O Grande Dia</p>
-        <h3 class="font-serif display-5 mb-2 text-dark">12 de Outubro de 2026</h3>
+
+        <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+          <h3 class="font-serif display-5 m-0 text-dark">{{ formattedWeddingDate() }}</h3>
+          <button class="btn btn-sm btn-white border shadow-sm rounded-circle d-inline-flex align-items-center justify-content-center transition-all hover-primary"
+                  (click)="openEditModal()"
+                  style="width: 30px; height: 30px; background-color: #ffffff;"
+                  title="Editar data e local">
+            <i class="fa-solid fa-pen text-muted" style="font-size: 0.75rem;"></i>
+          </button>
+        </div>
+
         <p class="text-muted mb-0 d-flex align-items-center justify-content-center justify-content-md-start">
           <i class="fa-solid fa-location-dot me-2 text-wedding-primary opacity-75"></i>
-          Fazenda Santa Bárbara, SP
+          {{ weddingLocation() }}
         </p>
       </div>
 
       <div class="d-flex gap-2 gap-md-3 mt-4 mt-md-0">
         <div class="bg-white bg-opacity-75 backdrop-blur px-3 py-2 rounded-4 text-center shadow-sm border border-white min-w-80">
-          <span class="d-block font-serif fs-2 text-dark">128</span>
+          <span class="d-block font-serif fs-2 text-dark">{{ daysLeft() }}</span>
           <span class="small text-muted text-uppercase fw-medium" style="font-size: 0.7rem;">Dias</span>
         </div>
         <div class="bg-white bg-opacity-75 backdrop-blur px-3 py-2 rounded-4 text-center shadow-sm border border-white min-w-80">
-          <span class="d-block font-serif fs-2 text-dark">14</span>
+          <span class="d-block font-serif fs-2 text-dark">{{ hoursLeft() }}</span>
           <span class="small text-muted text-uppercase fw-medium" style="font-size: 0.7rem;">Horas</span>
         </div>
         <div class="bg-white bg-opacity-75 backdrop-blur px-3 py-2 rounded-4 text-center shadow-sm border border-white min-w-80">
-          <span class="d-block font-serif fs-2 text-dark">45</span>
+          <span class="d-block font-serif fs-2 text-dark">{{ minutesLeft() }}</span>
           <span class="small text-muted text-uppercase fw-medium" style="font-size: 0.7rem;">Min</span>
         </div>
       </div>
@@ -34,7 +43,6 @@
 
   <div class="row g-4">
 
-    <!-- CARD DE TAREFAS -->
     <div class="col-12 col-lg-4 d-flex">
       <div class="card border-0 shadow-sm rounded-4 w-100 p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -80,7 +88,6 @@
       </div>
     </div>
 
-    <!-- CARD DE CONVIDADOS -->
     <div class="col-12 col-md-6 col-lg-4 d-flex">
       <div class="card border-0 shadow-sm rounded-4 w-100 p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -119,7 +126,6 @@
       </div>
     </div>
 
-    <!-- CARD DO ORÇAMENTO -->
     <div class="col-12 col-md-6 col-lg-4 d-flex">
       <div class="card border-0 shadow-sm rounded-4 w-100 p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -161,12 +167,10 @@
       </div>
     </div>
 
-    <!-- SEÇÃO DE FORNECEDORES -->
     <div class="col-12">
       <div class="card border-0 shadow-sm rounded-4 p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h4 class="font-serif fs-5 m-0 text-dark">Equipe de Fornecedores</h4>
-          <!-- 👇 CORRIGIDO: Agora usa routerLink para navegar correto! 👇 -->
           <a routerLink="/vendors" class="btn btn-sm btn-wedding-light text-dark fw-medium px-3 rounded-3 hover-primary text-decoration-none d-flex align-items-center">
             Gerenciar
           </a>
@@ -196,5 +200,45 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<div class="modal fade" id="editWeddingModal" tabindex="-1" aria-labelledby="editWeddingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+
+      <div class="modal-header border-bottom-0 pb-0 mt-2 ms-2">
+        <h5 class="modal-title fw-bold" id="editWeddingModalLabel" style="color: #4A4A4A;">
+          Alterar Detalhes do Grande Dia
+        </h5>
+        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form [formGroup]="weddingForm" (ngSubmit)="onSaveWeddingDetails()">
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Local do Casamento *</label>
+            <input type="text" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle"
+                   formControlName="location" placeholder="Ex: Fazenda Santa Bárbara, SP">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-medium">Data e Horário *</label>
+            <input type="datetime-local" class="form-control rounded-3 bg-light bg-opacity-50 border-light-subtle"
+                   formControlName="date">
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+            <button type="button" class="btn btn-light rounded-pill px-4 fw-medium" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn rounded-pill px-4 shadow-sm text-white fw-medium"
+                    [disabled]="weddingForm.invalid" style="background-color: #B38B82; border-color: #B38B82;">
+              Salvar Alterações
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
   </div>
 </div>
