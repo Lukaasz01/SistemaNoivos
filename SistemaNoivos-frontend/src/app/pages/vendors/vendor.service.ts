@@ -1,23 +1,25 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Vendor, VendorStatus } from '../../models/wedding.model';
+import { environment } from '../../../environments/environment';
+
+export type VendorFilterType = 'all' | 'Contratado' | 'Em Negociação' | 'Favorites';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendorService {
-  currentFilter = signal<'all' | 'Contratado' | 'Em Negociação' | 'Favorites'>('all');
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/vendors`; // A rota que criaremos no Java
+
+  // O estado agora nasce vazio e reativo!
+  vendors = signal<Vendor[]>([]);
+  currentFilter = signal<VendorFilterType>('all');
   searchQuery = signal<string>('');
 
-  vendors = signal<Vendor[]>([
-    { id: 1, name: 'Fazenda Santa Bárbara', category: 'Espaço', contactName: 'Juliana Torres', phone: '(11) 99999-1111', status: 'Contratado', cost: 15000, rating: 5, isFavorite: true, icon: 'fa-tree' },
-    { id: 2, name: 'Fasano Gourmet', category: 'Buffet', contactName: 'Chef Vinicius', phone: '(11) 99999-2222', status: 'Em Negociação', cost: 22000, rating: 5, isFavorite: false, icon: 'fa-utensils' },
-    { id: 3, name: 'Studio Luz Foto & Vídeo', category: 'Fotografia', contactName: 'Marcos Santos', phone: '(11) 99999-3333', status: 'Contratado', cost: 8200, rating: 4, isFavorite: true, icon: 'fa-camera' },
-    { id: 4, name: 'Banda Viva Festa', category: 'Música', contactName: 'Rafa & Banda', phone: '(11) 99999-4444', status: 'Em Negociação', cost: 5000, rating: 4, isFavorite: false, icon: 'fa-music' },
-    { id: 5, name: 'Casamento dos Sonhos Decorações', category: 'Decoração', contactName: 'Clara Mello', phone: '(11) 99999-5555', status: 'Contratado', cost: 14000, rating: 5, isFavorite: true, icon: 'fa-wand-magic-sparkles' },
-    { id: 6, name: 'Ateliê Blush & Silk', category: 'Trajes', contactName: 'Estilista Helena', phone: '(11) 99999-6666', status: 'Orçando', cost: 5500, rating: 3, isFavorite: false, icon: 'fa-shirt' },
-    { id: 7, name: 'Amor & Detalhes Assessoria', category: 'Assessoria', contactName: 'Patrícia Cerimonial', phone: '(11) 99999-7777', status: 'Contratado', cost: 4500, rating: 5, isFavorite: true, icon: 'fa-gem' },
-  ]);
-
+  // --- ESTATÍSTICAS COMPUTADAS ---
   stats = computed(() => {
     const list = this.vendors();
     const totalCount = list.length;
@@ -52,7 +54,7 @@ export class VendorService {
     return result;
   });
 
-  setFilter(filter: 'all' | 'Contratado' | 'Em Negociação' | 'Favorites') {
+  setFilter(filter: VendorFilterType) {
     this.currentFilter.set(filter);
   }
 
@@ -60,15 +62,64 @@ export class VendorService {
     this.searchQuery.set(query);
   }
 
-  toggleFavorite(id: number) {
-    this.vendors.update(list =>
-      list.map(vendor => vendor.id === id ? { ...vendor, isFavorite: !vendor.isFavorite } : vendor)
+  // --- INTEGRAÇÃO COM O BACK-END (JAVA) ---
+
+  getAllVendors(): Observable<Vendor[]> {
+    return this.http.get<Vendor[]>(this.apiUrl).pipe(
+      tap(dados => this.vendors.set(dados))
     );
   }
 
-  changeStatus(id: number, newStatus: VendorStatus) {
-    this.vendors.update(list =>
-      list.map(vendor => vendor.id === id ? { ...vendor, status: newStatus } : vendor)
+  addVendor(vendorData: Omit<Vendor, 'id'>): Observable<Vendor> {
+    return this.http.post<Vendor>(this.apiUrl, vendorData).pipe(
+      tap(newVendor => {
+        this.vendors.update(list => [newVendor, ...list]);
+      })
+    );
+  }
+
+  updateVendor(id: number, updatedData: Partial<Vendor>): Observable<Vendor> {
+    const currentVendor = this.vendors().find(v => v.id === id);
+    if (!currentVendor) throw new Error('Fornecedor não encontrado localmente');
+
+    const vendorToSave = { ...currentVendor, ...updatedData };
+
+    return this.http.put<Vendor>(`${this.apiUrl}/${id}`, vendorToSave).pipe(
+      tap(updatedVendor => {
+        this.vendors.update(list => list.map(v => v.id === id ? updatedVendor : v));
+      })
+    );
+  }
+
+  toggleFavorite(id: number): Observable<Vendor> {
+    const currentVendor = this.vendors().find(v => v.id === id);
+    if (!currentVendor) throw new Error('Fornecedor não encontrado localmente');
+
+    const updatedVendor = { ...currentVendor, isFavorite: !currentVendor.isFavorite };
+
+    return this.http.put<Vendor>(`${this.apiUrl}/${id}`, updatedVendor).pipe(
+      tap(savedVendor => {
+        this.vendors.update(list => list.map(v => v.id === id ? savedVendor : v));
+      })
+    );
+  }
+
+  changeStatus(id: number, newStatus: VendorStatus): Observable<Vendor> {
+    const currentVendor = this.vendors().find(v => v.id === id);
+    if (!currentVendor) throw new Error('Fornecedor não encontrado localmente');
+
+    const updatedVendor = { ...currentVendor, status: newStatus };
+
+    return this.http.put<Vendor>(`${this.apiUrl}/${id}`, updatedVendor).pipe(
+      tap(savedVendor => {
+        this.vendors.update(list => list.map(v => v.id === id ? savedVendor : v));
+      })
+    );
+  }
+
+  deleteVendor(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.vendors.update(list => list.filter(v => v.id !== id)))
     );
   }
 }
