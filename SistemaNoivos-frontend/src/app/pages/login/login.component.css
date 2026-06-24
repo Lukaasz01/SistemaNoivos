@@ -1,0 +1,143 @@
+/* Container principal que centraliza o card na tela cheia */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f7f6; /* Tom areia claro idêntico ao fundo do seu painel */
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* O Card flutuante do formulário */
+.login-card {
+  background: #ffffff;
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(74, 62, 61, 0.05); /* Sombra suave com base no tom escuro */
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  border: 1px solid #f0ece9;
+}
+
+/* Cabeçalho com o nome dos noivos */
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+  font-family: 'Playfair Display', 'Georgia', serif; /* Fonte elegante clássica de casamentos */
+  color: #4a3e3d;
+  font-size: 2.4rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+}
+
+.login-header p {
+  color: #8a7a78;
+  font-size: 0.9rem;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Banner de erro caso o login falhe */
+.error-banner {
+  background-color: #fff5f4;
+  border: 1px solid #fcdad7;
+  color: #c94c4c;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Estrutura dos campos de entrada */
+.form-group {
+  margin-bottom: 1.6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.78rem;
+  color: #5a4c4a;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.form-group input {
+  padding: 0.85rem 1.1rem;
+  border: 1px solid #e2dad6;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #332a29;
+  background-color: #faf8f7;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Efeito de foco elegante puxando o tom rosé do sistema */
+.form-group input:focus {
+  outline: none;
+  border-color: #cbb2a6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(203, 178, 166, 0.2);
+}
+
+/* Estado de campo inválido (Erros de digitação) */
+.form-group input.invalid {
+  border-color: #eab6b0;
+  background-color: #fffcfc;
+}
+
+.error-text {
+  color: #c94c4c;
+  font-size: 0.8rem;
+  margin-top: 0.45rem;
+  font-weight: 500;
+}
+
+/* Botão Estilo Cápsula combinando com as telas de Configuração */
+button[type="submit"] {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  background-color: #cbb2a6; /* Cor exata das abas ativas do seu sistema */
+  color: #ffffff;
+  border: none;
+  border-radius: 25px; /* Formato pill/cápsula idêntico ao 'Salvar Alterações' */
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(203, 178, 166, 0.2);
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #ba9e91;
+  box-shadow: 0 6px 16px rgba(186, 158, 145, 0.3);
+  transform: translateY(-1px);
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Estado de carregamento ou desabilitado */
+button[type="submit"]:disabled {
+  background-color: #e2dad6;
+  color: #a69894;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}

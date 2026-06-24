@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Painel dos Noivos</h1> <p>Gestão e Planejamento do Casamento</p>
+    </div>
+
+    <div class="error-banner" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">E-mail de Acesso</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="exemplo@casamento.com.br"
+          [class.invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        />
+        <small class="error-text" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')">
+          Insira um e-mail válido.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [class.invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        />
+      </div>
+
+      <button type="submit" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Entrar no Sistema</span>
+        <span *ngIf="isLoading">Autenticando...</span>
+      </button>
+    </form>
+  </div>
+</div>

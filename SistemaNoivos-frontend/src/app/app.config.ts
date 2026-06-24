@@ -1,15 +1,22 @@
-import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { routes } from './app.routes';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http'; // 👈 Adicionei o import aqui
+
+import { routes } from './app.routes';
+import { authInterceptor } from './core/auth/auth.interceptor'; // Garante o envio do Token JWT
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZonelessChangeDetection(),
+    // Configuração das rotas oficiais do seu ecossistema
     provideRouter(routes, withComponentInputBinding()),
+
+    // Suporte ao SSR (Server-Side Rendering)
     provideClientHydration(),
 
-    provideHttpClient(withFetch())
+    // 🔐 Mantém a interceptação automática do Token ativa globalmente
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };
