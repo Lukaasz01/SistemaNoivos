@@ -10,9 +10,12 @@ import java.util.Optional;
 public class GuestService {
 
     private final GuestRepository guestRepository;
+    private final NotificationService notificationService; // 👈 Injetado o gerenciador de notificações
 
-    public GuestService(GuestRepository guestRepository) {
+    // Construtor unificado atualizado
+    public GuestService(GuestRepository guestRepository, NotificationService notificationService) {
         this.guestRepository = guestRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Guest> findAll() {
@@ -25,6 +28,25 @@ public class GuestService {
 
     public Guest save(Guest guest) {
         return guestRepository.save(guest);
+    }
+
+    // ⚡ NOVA FUNÇÃO CENTRALIZADA DE ATUALIZAÇÃO REATIVA
+    public Optional<Guest> update(Long id, Guest guestDetails) {
+        return guestRepository.findById(id).map(guest -> {
+            guest.setName(guestDetails.getName());
+            guest.setGroup(guestDetails.getGroup());
+            guest.setCompanions(guestDetails.getCompanions());
+            guest.setStatus(guestDetails.getStatus());
+            guest.setPhone(guestDetails.getPhone());
+            guest.setDietaryRestrictions(guestDetails.getDietaryRestrictions());
+
+            Guest updatedGuest = guestRepository.save(guest);
+
+            // 📱 GATILHO: Dispara o alerta se a chave de notificações do WhatsApp estiver ligada!
+            notificationService.triggerWhatsappRsvpAlert(updatedGuest.getName(), updatedGuest.getStatus());
+
+            return updatedGuest;
+        });
     }
 
     public void deleteById(Long id) {

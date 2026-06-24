@@ -20,6 +20,9 @@ public class VendorService {
     @Autowired
     private ExpenseRepository expenseRepository; // 👈 Injetado para sincronizar o orçamento
 
+    @Autowired
+    private NotificationService notificationService;
+
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();
     }
@@ -59,16 +62,18 @@ public class VendorService {
         expense.setCategory(mapCategory(vendor.getCategory()));
         expense.setEstimatedCost(vendor.getCost());
 
-        // 👇 NOVA REGRA: Se contratado, preenche o Custo Real E o Valor Já Pago automaticamente!
         if ("Contratado".equals(vendor.getStatus())) {
             expense.setActualCost(vendor.getCost());
-            expense.setPaidAmount(vendor.getCost()); // 👈 Faz entrar no "Já Pago" da view de Budget
+            expense.setPaidAmount(vendor.getCost());
         } else {
             expense.setActualCost(0.0);
-            expense.setPaidAmount(0.0); // 👈 Fica zerado enquanto for apenas Orçando/Em Negociação
+            expense.setPaidAmount(0.0);
         }
 
-        expenseRepository.save(expense);
+        Expense savedExpense = expenseRepository.save(expense);
+
+        // 👇 2. LOGO APÓS SALVAR A DESPESA, CHAME O VERIFICADOR DE ORÇAMENTO 👇
+        notificationService.checkBudgetThreshold(savedExpense);
     }
 
     private String mapCategory(String vendorCategory) {
