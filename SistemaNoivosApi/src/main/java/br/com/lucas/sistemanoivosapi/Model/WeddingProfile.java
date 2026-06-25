@@ -12,6 +12,8 @@ public class WeddingProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Double budgetThreshold;
+
     // Geral (image_35bf58.png)
     @Column(name = "bride_name", nullable = false)
     private String brideName;
@@ -73,4 +75,7 @@ public class WeddingProfile {
 
     public boolean isBudgetAlerts() { return budgetAlerts; }
     public void setBudgetAlerts(boolean budgetAlerts) { this.budgetAlerts = budgetAlerts; }
+
+    public Double getBudgetThreshold() { return budgetThreshold; }
+    public void setBudgetThreshold(Double budgetThreshold) { this.budgetThreshold = budgetThreshold; }
 }

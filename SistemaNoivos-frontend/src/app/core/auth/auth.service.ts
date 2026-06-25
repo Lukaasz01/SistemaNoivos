@@ -11,8 +11,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
-  private apiUrl = 'http://localhost:9001/api/auth/login';
-
+//   private apiUrl = 'http://localhost:9001/api/auth/login';
+  private apiUrl = 'http://127.0.0.1:9001/api/auth/login';
   // 💎 Signals globais do estado de login
   isAuthenticated = signal<boolean>(false);
   userRole = signal<string | null>(null);
