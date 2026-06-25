@@ -39,10 +39,13 @@ public class SecurityConfig {
                 // Configura a sessão como STATELESS (sem estado no servidor)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Define quais rotas são públicas e quais são protegidas
+                // 🟢 ABERTURA ÚNICA: Define as regras de autorização de forma limpa
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll() // Rota de login 100% pública
-                        .anyRequest().authenticated() // Todo o resto exige Token válido
+                        // Libera tanto o login quanto o logout de forma pública
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/logout").permitAll()
+
+                        // Qualquer outra requisição do sistema vai exigir o Token válido!
+                        .anyRequest().authenticated()
                 )
 
                 // Injeta o nosso filtro de Token ANTES do filtro padrão do Spring Security

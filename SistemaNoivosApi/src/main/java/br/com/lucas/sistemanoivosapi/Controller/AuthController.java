@@ -55,4 +55,14 @@ public class AuthController {
         System.out.println("❌ Erro: Senha incorreta para o usuário " + data.email());
         return ResponseEntity.status(401).body("Credenciais inválidas");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // 🟢 Limpa explicitamente o contexto de segurança do Spring para esta requisição
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+
+        System.out.println("📤 LOGOUT: Um usuário encerrou a sessão com sucesso.");
+
+        return ResponseEntity.ok().body("Logout realizado com sucesso");
+    }
 }

@@ -14,6 +14,10 @@ import { AuthService } from './core/auth/auth.service';
 })
 export class App {
   taskService = inject(TaskService);
-
   public authService = inject(AuthService);
+
+  // 🟢 Método que dispara o encerramento da sessão
+  onLogout(): void {
+    this.authService.logout();
+  }
 }

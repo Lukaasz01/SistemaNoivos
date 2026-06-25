@@ -1,38 +1,53 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { TaskListComponent } from './pages/tasks/task-list.component';
-import { GuestListComponent } from './pages/guests/guest-list.component';
-import { BudgetListComponent } from './pages/budget/budget-list.component';
-import { VendorListComponent } from './pages/vendors/vendor-list.component';
-import { SettingsComponent } from './pages/settings/settings.component';
 
-// 👇 NOVOS IMPORTS DE SEGURANÇA 👇
-import { LoginComponent } from './pages/login/login.component';
-import { authGuard } from './core/auth/auth.guard';
+// 🟢 CORREÇÃO AQUI: Apontando os dois guards para a pasta física correta (/core/guard/)
+import { authGuard } from './core/guard/auth.guard';
+import { loginGuard } from './core/guard/login.guard';
 
 export const routes: Routes = [
-  // 🔓 ROTA ABERTA: Tela de Login (Livre para qualquer usuário acessar)
-  { path: 'login', component: LoginComponent },
+  // 🔓 TELA DE LOGIN: Protegida pelo loginGuard (se o usuário já estiver logado, não consegue entrar aqui)
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
+    canActivate: [loginGuard]
+  },
 
-  // 🔒 ROTAS PROTEGIDAS: Todo o ecossistema agora está blindado pelo AuthGuard
+  // 🔒 ROTAS PROTEGIDAS: Todo o ecossistema envelopado pelo AuthGuard usando Lazy Loading
   {
     path: '',
-    canActivate: [authGuard], // 👈 Exige o Token JWT para qualquer rota filha abaixo
+    canActivate: [authGuard],
     children: [
       // Rota inicial limpa dentro do painel logado
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
-      // Caminhos oficiais do seu ecossistema protegidos
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'tasks', component: TaskListComponent },
-      { path: 'guests', component: GuestListComponent },
-      { path: 'budget', component: BudgetListComponent },
-      { path: 'vendors', component: VendorListComponent },
-      { path: 'settings', component: SettingsComponent }
+      // 🟢 COMPONENTES CARREGADOS SOB DEMANDA (Lazy Loading)
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'tasks',
+        loadComponent: () => import('./pages/tasks/task-list.component').then(m => m.TaskListComponent)
+      },
+      {
+        path: 'guests',
+        loadComponent: () => import('./pages/guests/guest-list.component').then(m => m.GuestListComponent)
+      },
+      {
+        path: 'budget',
+        loadComponent: () => import('./pages/budget/budget-list.component').then(m => m.BudgetListComponent)
+      },
+      {
+        path: 'vendors',
+        loadComponent: () => import('./pages/vendors/vendor-list.component').then(m => m.VendorListComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent)
+      }
     ]
   },
 
   // 🚪 ROTA CURINGA: Se digitar qualquer URL inválida, joga para o Dashboard.
-  // Se o usuário não tiver o token, o Guard interceptará e o jogará para a tela de login automaticamente.
   { path: '**', redirectTo: 'dashboard' }
 ];

@@ -46,11 +46,16 @@
       </nav>
     </div>
 
-    <div class="p-4 border-top">
+    <div class="p-4 border-top d-flex flex-column gap-1">
       <a routerLink="/settings" routerLinkActive="active" class="nav-link custom-nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3">
         <i class="fa-solid fa-gear text-center" style="width: 20px;"></i>
         <span>Configurações</span>
       </a>
+
+      <button (click)="onLogout()" class="nav-link custom-nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 border-0 bg-transparent text-danger text-start w-100">
+        <i class="fa-solid fa-right-from-bracket text-center" style="width: 20px;"></i>
+        <span>Sair do Sistema</span>
+      </button>
     </div>
   </aside>
 
@@ -71,9 +76,10 @@
       </div>
 
       <div class="d-flex align-items-center gap-3">
-        <div class="rounded-circle overflow-hidden shadow-sm border border-2 border-white cursor-pointer ms-2"
+        <div (click)="onLogout()" title="Clique para Sair"
+             class="rounded-circle overflow-hidden shadow-sm border border-2 border-white cursor-pointer ms-2 position-relative btn-avatar-logout"
              style="width: 40px; height: 40px; background-color: #D4B8B1;">
-          <img src="https://placehold.co/100x100/D4B8B1/ffffff?text=A" alt="Perfil"
+          <img src="https://placehold.co/100x100/D4B8B1/ffffff?text=Sair" alt="Perfil"
                class="w-100 h-100 object-fit-cover">
         </div>
       </div>
