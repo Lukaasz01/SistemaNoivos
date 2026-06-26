@@ -1,7 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy, signal, computed, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
-import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common'; // 👈 Adicionado isPlatformBrowser
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TaskService } from '../tasks/task.service';
 import { GuestService } from '../guests/guest.service';
@@ -12,7 +11,7 @@ import { VendorStatus } from '../../models/wedding.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, DecimalPipe, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, DecimalPipe], // 🟢 ReactiveFormsModule removido daqui
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
@@ -22,10 +21,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   guestService = inject(GuestService);
   vendorService = inject(VendorService);
   budgetService = inject(BudgetService);
-  private fb = inject(FormBuilder);
-  private platformId = inject(PLATFORM_ID); // 👈 Injetado para detectar se é navegador ou servidor
+  private platformId = inject(PLATFORM_ID);
 
-  // 📝 Signals nascem com dados padrão para o servidor não quebrar
+  // 📝 Signals reativos que passam a ler os dados dinamicamente
   weddingDate = signal<string>('2026-10-12T18:00:00');
   weddingLocation = signal<string>('Fazenda Santa Bárbara, SP');
 
@@ -34,9 +32,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   hoursLeft = signal<number>(0);
   minutesLeft = signal<number>(0);
   private timerId: any;
-
-  // 📑 Formulário de Edição
-  weddingForm!: FormGroup;
 
   // 📅 Computa a data por extenso dinamicamente em Português
   formattedWeddingDate = computed(() => {
@@ -49,7 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    // 🛡️ PROTEÇÃO SSR: Só lê o localStorage se estiver no navegador
+    // 🛡️ PROTEÇÃO SSR: Lê o que o componente de settings salvou no localStorage
     if (isPlatformBrowser(this.platformId)) {
       const savedDate = localStorage.getItem('wedding_date');
       const savedLocation = localStorage.getItem('wedding_location');
@@ -64,11 +59,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.vendorService.getAllVendors().subscribe();
     this.budgetService.getAllExpenses().subscribe();
 
-    // Inicializa o formulário e a contagem regressiva
-    this.initForm();
+    // Inicializa o cálculo da contagem regressiva
     this.calculateCountdown();
 
-    // 🛡️ PROTEÇÃO SSR: O temporizador só deve rodar no navegador
+    // 🛡️ PROTEÇÃO SSR: O temporizador atualiza a contagem a cada minuto
     if (isPlatformBrowser(this.platformId)) {
       this.timerId = setInterval(() => this.calculateCountdown(), 60000);
     }
@@ -78,14 +72,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.timerId) {
       clearInterval(this.timerId);
     }
-  }
-
-  initForm() {
-    const currentTargetDate = this.weddingDate().substring(0, 16);
-    this.weddingForm = this.fb.group({
-      date: [currentTargetDate, Validators.required],
-      location: [this.weddingLocation(), Validators.required]
-    });
   }
 
   calculateCountdown() {
@@ -104,48 +90,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  openEditModal() {
-    const currentTargetDate = this.weddingDate().substring(0, 16);
-    this.weddingForm.patchValue({
-      date: currentTargetDate,
-      location: this.weddingLocation()
-    });
+  // 🟢 MÉTODOS DE MODAL E SALVAMENTO REMOVIDOS DAQUI (Limpeza completa!)
 
-    const modalElement = document.getElementById('editWeddingModal');
-    if (modalElement) {
-      const modal = new (window as any).bootstrap.Modal(modalElement);
-      modal.show();
-    }
-  }
-
-  onSaveWeddingDetails() {
-    if (this.weddingForm.valid) {
-      const formValues = this.weddingForm.value;
-
-      this.weddingDate.set(formValues.date);
-      this.weddingLocation.set(formValues.location);
-
-      // 🛡️ PROTEÇÃO SSR: Só salva se estiver no navegador (embora cliques só ocorram no navegador)
-      if (isPlatformBrowser(this.platformId)) {
-        localStorage.setItem('wedding_date', formValues.date);
-        localStorage.setItem('wedding_location', formValues.location);
-      }
-
-      this.calculateCountdown();
-      this.closeModal();
-    }
-  }
-
-  closeModal() {
-    const modalElement = document.getElementById('editWeddingModal');
-    if (modalElement) {
-      let modal = (window as any).bootstrap.Modal.getInstance(modalElement);
-      if (!modal) modal = new (window as any).bootstrap.Modal(modalElement);
-      modal.hide();
-    }
-  }
-
-  // --- OUTROS MÉTODOS REATIVOS DO DASHBOARD ---
+  // --- MÉTODOS REATIVOS DO DASHBOARD ---
   upcomingTasks = computed(() => {
     return this.taskService.tasks().filter(t => !t.completed).slice(0, 4);
   });
